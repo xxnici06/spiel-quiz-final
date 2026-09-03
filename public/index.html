@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#071026">
+<title>Spieleabend · Spielauswahl</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Exo+2:ital,wght@0,600;0,800;1,800;1,900&family=Work+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+<style>
+  .hub-grid{display:grid; gap:18px; max-width:640px; margin:0 auto;}
+  .game-card{
+    display:block; text-decoration:none; color:var(--ink);
+    padding:30px 28px; border-radius:22px; cursor:pointer;
+    background:linear-gradient(180deg, var(--panel-2), var(--panel));
+    border:1px solid rgba(58,99,192,0.4);
+    box-shadow:0 20px 50px rgba(0,0,0,0.45);
+    transition:transform .15s ease, border-color .15s ease, box-shadow .15s ease;
+  }
+  .game-card:hover{transform:translateY(-4px); border-color:rgba(46,230,214,0.6); box-shadow:0 0 30px rgba(46,230,214,0.15), 0 24px 55px rgba(0,0,0,0.5);}
+  .game-card .gc-title{
+    font-family:'Exo 2'; font-weight:900; font-style:italic; font-size:1.5rem;
+    letter-spacing:0.03em; margin-bottom:6px;
+  }
+  .game-card.jeopardy .gc-title{color:var(--gold);}
+  .game-card.df .gc-title{color:#2ee6d6; text-shadow:0 0 14px rgba(46,230,214,0.4);}
+  .game-card .gc-desc{color:var(--ink-dim); font-size:0.88rem; line-height:1.55;}
+  .game-card .gc-tag{
+    display:inline-block; margin-top:12px; font-size:0.68rem; font-weight:700;
+    text-transform:uppercase; letter-spacing:0.08em; padding:5px 14px; border-radius:999px;
+    background:rgba(58,99,192,0.15); border:1px solid rgba(58,99,192,0.4); color:var(--ink-dim);
+  }
+</style>
+</head>
+<body>
+<div class="stage">
+  <div style="max-width:640px; margin:6vh auto 30px;">
+    <h1 class="hero">SPIELEABEND</h1>
+    <p class="hero-sub">Wähl aus, was ihr spielen wollt</p>
+  </div>
+
+  <div class="hub-grid">
+    <a class="game-card jeopardy" href="jeopardy.html">
+      <div class="gc-title">🎯 JEOPARDY QUIZ-ABEND</div>
+      <div class="gc-desc">2 Boards, 5 Kategorien, Teams wählen reihum Felder. Mit Gamemaster, Gameboard-Anzeige und Handy-Buzzern für alle Mitspieler.</div>
+      <span class="gc-tag">2–8 Teams · Online mit Handys</span>
+    </a>
+
+    <a class="game-card df" href="df.html">
+      <div class="gc-title">💔 DER DÜMMSTE FLIEGT</div>
+      <div class="gc-desc">Jeder startet mit 3 Herzen. Reihum gibt's Fragen mit 30-Sekunden-Timer – und nach jeder Runde voten alle per Handy, wer die dümmste Antwort gegeben hat. Wer gevotet wird, verliert ein Herz. Die letzten 2 kämpfen im Finale.</div>
+      <span class="gc-tag">3–12 Spieler · Voting per Handy</span>
+    </a>
+  </div>
+</div>
+<script>
+  /* Direktbeitritt per QR-Code: ...index.html?code=ABC123[&role=board]
+     wird an die Beitritts-Logik auf jeopardy.html weitergereicht. */
+  (function () {
+    var q = location.search;
+    if (/[?&]code=[A-Za-z0-9]{6}(&|$)/.test(q)) location.replace("jeopardy.html" + q);
+  })();
+</script>
+</body>
+</html>

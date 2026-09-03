@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#071026">
+<title>Quiz-Abend · Gameboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Exo+2:ital,wght@0,600;0,800;1,800;1,900&family=Work+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div class="stage game-stage">
+
+  <!-- Warten auf Verbindung -->
+  <div class="setup-card" id="waiting">
+    <h1 class="hero" style="font-size:1.9rem;">VERBINDE…</h1>
+    <p class="hero-sub" id="waitingText">Warte auf den Gamemaster. Sobald das Spiel läuft, erscheint hier das Board.</p>
+    <button class="btn-ghost small" id="leaveBtn" style="width:100%;">← Verlassen</button>
+  </div>
+
+  <!-- Live-Ansicht -->
+  <div id="liveView" class="hidden">
+    <div class="topline">
+      <div class="board-badge" id="boardBadge">BOARD 1</div>
+      <div class="turn-badge" id="turnBadge"></div>
+    </div>
+    <div class="scoreboard" id="scoreboard"></div>
+    <div class="question-panel hidden" id="questionPanel"></div>
+    <div class="board-scroll"><div class="board" id="board"></div></div>
+    <div class="footer-row">
+      <span class="conn-note" id="connNote"></span>
+    </div>
+  </div>
+
+  <!-- Beitritts-Hinweis für Nachzügler (Beamer/TV) -->
+  <div class="join-hint hidden" id="joinHint">
+    <img alt="QR-Code zum Mitspielen" id="joinHintQr">
+    <div>
+      <div class="jh-lbl">Mitspielen</div>
+      <div class="jh-url" id="joinHintUrl"></div>
+      <div class="jh-code" id="joinHintCode"></div>
+    </div>
+  </div>
+
+  <!-- Endstand -->
+  <div class="setup-card hidden" id="endedView">
+    <h1 class="hero">ENDSTAND</h1>
+    <div class="podium" id="podium"></div>
+    <button class="btn-red big" id="homeBtn">ZUR STARTSEITE</button>
+  </div>
+
+</div>
+<script src="js/data.js"></script>
+<script src="js/net.js"></script>
+<script src="js/sound.js"></script>
+<script src="js/viewer.js"></script>
+</body>
+</html>

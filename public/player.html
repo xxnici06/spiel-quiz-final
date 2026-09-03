@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#071026">
+<title>Quiz-Abend · Dein Buzzer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Exo+2:ital,wght@0,600;0,800;1,800;1,900&family=Work+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div class="stage">
+
+  <!-- Team wählen -->
+  <div class="setup-card hidden" id="teamPick">
+    <h1 class="hero" style="font-size:1.9rem;">WELCHES TEAM BIST DU?</h1>
+    <p class="hero-sub">Dein Handy wird zum Buzzer für dieses Team</p>
+    <div class="team-pick-grid" id="teamPickGrid"></div>
+  </div>
+
+  <!-- Warten auf Verbindung -->
+  <div class="setup-card" id="waiting">
+    <h1 class="hero" style="font-size:1.9rem;">VERBINDE…</h1>
+    <p class="hero-sub">Warte auf den Gamemaster.</p>
+    <button class="btn-ghost small" id="leaveBtn" style="width:100%;">← Verlassen</button>
+  </div>
+
+  <!-- Spieler-Ansicht -->
+  <div id="playerView" class="hidden">
+    <div class="player-card" id="playerCard">
+      <div class="player-team" id="playerTeam"></div>
+      <div class="player-score" id="playerScore">0</div>
+      <div class="player-score-label">PUNKTE</div>
+    </div>
+    <div class="turn-strip" id="turnStrip"></div>
+    <div class="player-zone" id="playerZone"></div>
+    <div class="footer-row"><span class="conn-note">● live verbunden</span></div>
+  </div>
+
+  <!-- Endstand -->
+  <div class="setup-card hidden" id="endedView">
+    <h1 class="hero">ENDSTAND</h1>
+    <div class="podium" id="podium"></div>
+    <button class="btn-red big" id="homeBtn">ZUR STARTSEITE</button>
+  </div>
+
+</div>
+<script src="js/data.js"></script>
+<script src="js/net.js"></script>
+<script src="js/sound.js"></script>
+<script src="js/player.js"></script>
+</body>
+</html>

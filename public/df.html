@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#0a0e1a">
+<title>Der Dümmste fliegt</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Exo+2:ital,wght@0,600;0,800;1,800;1,900&family=Work+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/df.css">
+</head>
+<body>
+<div class="bubbles" aria-hidden="true">
+  <span></span><span></span><span></span><span></span><span></span>
+  <span></span><span></span><span></span><span></span><span></span>
+</div>
+
+<div class="stage">
+
+  <!-- Titel -->
+  <div class="df-title-wrap">
+    <div class="df-title">DER DÜMMSTE FLIEGT</div>
+    <div class="df-title-hearts">💔 RAUS 💔</div>
+  </div>
+
+  <!-- ROLLENWAHL -->
+  <div class="df-card" id="roleView">
+    <p class="df-sub">Wer bist du?</p>
+    <button class="df-btn red big" id="roleGmBtn">🎙️ GAMEMASTER</button>
+    <div style="height:12px"></div>
+    <a class="df-btn cyan big" href="df-handy.html" style="display:block; text-align:center; text-decoration:none;">📱 MITSPIELEN (HANDY)</a>
+    <p class="df-sub" style="margin-top:16px; font-size:0.78rem;">Mitspieler öffnen die Datei <b>df-handy.html</b> auf ihrem Handy – dort wird gevotet, wer die dümmste Antwort gegeben hat.</p>
+    <a class="df-back" href="index.html">← Zur Spielauswahl</a>
+  </div>
+
+  <!-- SETUP (Gamemaster) -->
+  <div class="df-card hidden" id="setupView">
+    <p class="df-sub">Wer spielt mit? (3–12 Spieler, jeder startet mit 3 ❤)</p>
+    <div class="df-add-row">
+      <input type="text" id="nameInput" maxlength="16" placeholder="Name eingeben…">
+      <button class="df-btn cyan" id="addBtn">+ HINZUFÜGEN</button>
+    </div>
+    <div class="df-name-list" id="nameList"></div>
+    <div class="df-error" id="setupError"></div>
+    <button class="df-btn red big" id="startBtn">SPIEL STARTEN</button>
+    <button class="df-btn" id="backToRoleBtn" style="width:100%; margin-top:10px; background:transparent; border:1px solid #232c44; color:#8b95b3;">← Zurück</button>
+  </div>
+
+  <!-- SPIEL (Gamemaster) -->
+  <div id="gameView" class="hidden">
+    <div class="df-statusbar">
+      <span class="df-chip round" id="roundChip">RUNDE 1</span>
+      <span class="df-chip" id="qCountChip"></span>
+      <span class="df-chip code" id="codeChip"></span>
+      <button class="df-reset" id="resetBtn">Zurücksetzen</button>
+    </div>
+
+    <!-- Fragen- / Vote-Panel -->
+    <div class="df-qpanel hidden" id="qPanel"></div>
+
+    <!-- Spieler-Grid -->
+    <div class="df-grid" id="playerGrid"></div>
+  </div>
+
+  <!-- ELIMINIERUNG (Overlay) -->
+  <div class="df-overlay hidden" id="elimOverlay">
+    <div class="df-elim-box">
+      <div class="df-elim-title">💥 FLIEGT RAUS! 💥</div>
+      <div class="df-elim-name" id="elimName"></div>
+      <button class="df-btn red big" id="elimContinueBtn">WEITER →</button>
+    </div>
+  </div>
+
+  <!-- FINALE-INTRO (Overlay) -->
+  <div class="df-overlay hidden" id="finaleIntro">
+    <div class="df-elim-box">
+      <div class="df-finale-title">🏆 FINALE 🏆</div>
+      <div class="df-elim-name" id="finaleNames"></div>
+      <p class="df-sub" id="finaleSubText"></p>
+      <button class="df-btn cyan big" id="finaleStartBtn">FINALE STARTEN →</button>
+    </div>
+  </div>
+
+  <!-- SIEGER (Overlay) -->
+  <div class="df-overlay hidden" id="winnerOverlay">
+    <div class="df-elim-box">
+      <div class="df-finale-title">👑 SIEGER 👑</div>
+      <div class="df-elim-name gold" id="winnerName"></div>
+      <div class="df-sub" id="winnerScore"></div>
+      <button class="df-btn cyan big" id="revealBtn">📋 FINALE-FRAGEN ANSEHEN</button>
+      <button class="df-btn red big" id="newGameBtn">NEUES SPIEL</button>
+      <a class="df-back" href="index.html">← Zur Spielauswahl</a>
+    </div>
+  </div>
+
+</div>
+<script src="js/df-data.js"></script>
+<script src="js/net.js"></script>
+<script src="js/sound.js"></script>
+<script src="js/df.js"></script>
+</body>
+</html>

@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#071026">
+<title>Quiz-Abend · Start</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Exo+2:ital,wght@0,600;0,800;1,800;1,900&family=Work+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div class="stage">
+  <div class="setup-card">
+    <h1 class="hero">QUIZ-ABEND</h1>
+    <p class="hero-sub">10 Themen · 2 Runden · Live auf allen Geräten</p>
+
+    <!-- Rollenwahl -->
+    <div id="modeChoice">
+      <button class="btn-red big" id="modeGmBtn">🎙️ GAMEMASTER</button>
+      <div style="height:12px"></div>
+      <button class="btn-blue big" id="modeJoinBtn" style="width:100%;">📱 MITSPIELEN</button>
+      <div style="height:12px"></div>
+      <button class="btn-blue big" id="modeBoardBtn" style="width:100%;">🖥️ GAMEBOARD</button>
+      <a href="index.html" class="df-back" style="display:block; text-align:center; margin-top:16px; color:#8fa0cc; font-size:0.8rem; text-decoration:none;">← Zur Spielauswahl</a>
+      <p class="role-hint">Gamemaster: du leitest das Spiel · Mitspielen: dein Handy als Buzzer · Gameboard: großer Bildschirm mit Board &amp; Fragen für alle</p>
+    </div>
+
+    <!-- Gamemaster: Teams -->
+    <div id="gmSetup" class="hidden">
+      <div class="set-head">
+        <p class="hero-sub" style="margin:0;">Welches Thema? <span class="muted">(10 zur Auswahl)</span></p>
+        <button class="btn-ghost small" id="randomSetBtn" type="button">🎲 Zufall</button>
+      </div>
+      <div class="set-grid" id="setGrid"></div>
+      <p class="hero-sub" style="margin-bottom:10px;">Wie viele Teams spielen mit?</p>
+      <div class="count-row" id="countRow"></div>
+      <div class="team-inputs" id="teamInputs"></div>
+      <button class="btn-red big" id="startBtn">SPIEL STARTEN</button>
+      <button class="btn-ghost small" id="backBtn1" style="margin-top:12px; width:100%;">← Zurück</button>
+
+      <div class="rules-box">
+        <div class="rules-title">SO WIRD GESPIELT</div>
+        <p>Die Teams sind reihum am Zug und wählen ein Feld. Richtig = volle Punkte. Falsch = die Hälfte Abzug, dann dürfen sich andere Teams per Handy melden: Richtig bringt die halben Punkte, falsch kostet ebenfalls die Hälfte. Nach Board 1 geht's weiter zu Board 2 mit doppelten Punkten.</p>
+      </div>
+    </div>
+
+    <!-- Beitreten (Mitspielen oder Gameboard) -->
+    <div id="joinSetup" class="hidden">
+      <p class="hero-sub" style="margin-bottom:14px;" id="joinTitle">Gib den Spielcode vom Gamemaster ein</p>
+      <input type="text" id="joinCode" class="code-field" maxlength="6" placeholder="XXXXXX" autocomplete="off" autocapitalize="characters">
+      <div class="error-msg" id="joinError"></div>
+      <button class="btn-red big" id="joinBtn">WEITER</button>
+      <button class="btn-ghost small" id="backBtn2" style="margin-top:12px; width:100%;">← Zurück</button>
+    </div>
+
+  </div>
+</div>
+<script src="js/data.js"></script>
+<script src="js/net.js"></script>
+<script src="js/setup.js"></script>
+<script src="js/connect-panel.js"></script>
+</body>
+</html>

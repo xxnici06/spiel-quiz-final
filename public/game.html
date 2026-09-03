@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#071026">
+<title>Quiz-Abend · Board</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Exo+2:ital,wght@0,600;0,800;1,800;1,900&family=Work+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div class="stage game-stage">
+
+  <!-- Kopfzeile: Board-Nr + Am Zug -->
+  <div class="topline">
+    <div class="board-badge" id="boardBadge">BOARD 1</div>
+    <div class="code-chip hidden" id="codeChip"></div>
+    <div class="turn-badge" id="turnBadge"></div>
+  </div>
+
+  <!-- Punktestand -->
+  <div class="scoreboard" id="scoreboard"></div>
+
+  <!-- Fragen-Panel (erscheint über dem Board) -->
+  <div class="question-panel hidden" id="questionPanel"></div>
+
+  <!-- Board -->
+  <div class="board-scroll">
+    <div class="board" id="board"></div>
+  </div>
+
+  <!-- Board fertig -->
+  <div class="board-done hidden" id="boardDone">
+    <button class="btn-red big" id="nextBoardBtn"></button>
+  </div>
+
+  <div class="footer-row">
+    <button class="btn-ghost small" id="resetBtn">Spiel zurücksetzen</button>
+  </div>
+
+</div>
+<script src="js/data.js"></script>
+<script src="js/net.js"></script>
+<script src="js/sound.js"></script>
+<script src="js/game.js"></script>
+<script src="js/connect-panel.js"></script>
+</body>
+</html>

@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#071026">
+<title>Quiz-Abend · Dein Buzzer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Exo+2:ital,wght@0,600;0,800;1,800;1,900&family=Work+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#071026; --bg-deep:#040a1a; --panel:#0c1a3d; --panel-2:#10224e;
+    --cell-top:#1e3f86; --cell-bot:#0d1d44; --cell-border:#3a63c0;
+    --red-top:#e0234e; --red-bot:#8f0f26;
+    --ink:#f5f7ff; --ink-dim:#8fa0cc; --gold:#ffd24a; --green:#3ddc84; --wrong:#ff5470;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  button,input{touch-action:manipulation;}
+  body{
+    background:
+      linear-gradient(rgba(58,99,192,0.06) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(58,99,192,0.06) 1px, transparent 1px),
+      radial-gradient(ellipse at 50% -20%, #12234f 0%, var(--bg) 55%, var(--bg-deep) 100%);
+    background-size:42px 42px, 42px 42px, cover;
+    color:var(--ink); font-family:'Work Sans', sans-serif; min-height:100vh;
+    -webkit-tap-highlight-color:transparent;
+  }
+  .stage{max-width:480px; margin:0 auto; padding:24px 16px 50px;}
+  .hidden{display:none !important;}
+  .hero{
+    font-family:'Exo 2'; font-weight:900; font-style:italic; text-align:center;
+    font-size:1.9rem; letter-spacing:0.03em; margin:0 0 4px;
+    background:linear-gradient(180deg,#fff,#b9c8f2);
+    -webkit-background-clip:text; background-clip:text; color:transparent;
+  }
+  .hero-sub{text-align:center; color:var(--ink-dim); margin:0 0 24px; font-size:0.9rem; line-height:1.5;}
+  .card{
+    padding:32px 26px; margin-top:5vh;
+    background:linear-gradient(180deg, var(--panel-2), var(--panel));
+    border:1px solid rgba(58,99,192,0.4); border-radius:22px;
+    box-shadow:0 30px 70px rgba(0,0,0,0.55);
+  }
+  .btn-red{
+    font-family:'Exo 2'; font-weight:800; font-style:italic; letter-spacing:0.06em;
+    border:none; cursor:pointer; color:#fff; width:100%;
+    background:linear-gradient(180deg, var(--red-top), var(--red-bot));
+    border-radius:999px; padding:17px 30px; font-size:1.1rem;
+    box-shadow:0 6px 18px rgba(224,35,78,0.35), inset 0 1px 0 rgba(255,255,255,0.25);
+  }
+  .btn-red:active{transform:scale(0.97);}
+  .btn-ghost{
+    background:transparent; border:1px solid rgba(255,255,255,0.15); color:var(--ink-dim);
+    border-radius:999px; padding:10px 22px; cursor:pointer; font-family:'Work Sans';
+    font-weight:600; font-size:0.8rem; width:100%; margin-top:12px;
+  }
+  .code-field{
+    width:100%; padding:16px; border-radius:14px; margin-bottom:10px;
+    border:1px solid rgba(58,99,192,0.45); background:rgba(255,255,255,0.05);
+    color:var(--ink); font-family:'Exo 2'; font-weight:900; font-style:italic;
+    font-size:1.5rem; text-align:center; letter-spacing:0.35em; text-transform:uppercase;
+  }
+  .code-field:focus{outline:none; border-color:var(--gold);}
+  .error-msg{color:var(--wrong); text-align:center; font-size:0.85rem; min-height:1.2em; margin-bottom:10px;}
+  .team-pick-grid{display:grid; grid-template-columns:1fr 1fr; gap:12px;}
+  .steal-btn{
+    font-family:'Exo 2'; font-weight:800; font-style:italic; font-size:1rem;
+    padding:18px 12px; border-radius:999px; cursor:pointer; color:var(--ink);
+    background:linear-gradient(180deg, var(--cell-top), var(--cell-bot));
+    border:2px solid var(--tc); box-shadow:0 4px 12px rgba(0,0,0,0.35);
+  }
+  .player-card{
+    margin:4vh auto 14px; padding:34px 26px; text-align:center;
+    background:linear-gradient(180deg, var(--panel-2), var(--panel));
+    border:2px solid var(--tc); border-radius:22px;
+    box-shadow:0 0 34px color-mix(in srgb, var(--tc) 25%, transparent), 0 24px 50px rgba(0,0,0,0.5);
+  }
+  .player-team{
+    font-family:'Exo 2'; font-weight:800; font-style:italic; letter-spacing:0.05em;
+    font-size:1.2rem; color:var(--tc); margin-bottom:8px; text-transform:uppercase;
+  }
+  .player-score{
+    font-family:'Exo 2'; font-weight:900; font-style:italic; font-size:4.4rem; line-height:1;
+    text-shadow:0 4px 10px rgba(0,0,0,0.5);
+  }
+  .player-score.neg{color:var(--wrong);}
+  .player-score.pop{animation:scorePop .5s cubic-bezier(.2,1.6,.4,1);}
+  @keyframes scorePop{0%{transform:scale(1);} 40%{transform:scale(1.35);} 100%{transform:scale(1);}}
+  .player-score-label{font-size:0.7rem; letter-spacing:0.2em; color:var(--ink-dim); margin-top:4px;}
+  .turn-strip{
+    margin:0 auto 20px; text-align:center; padding:12px 16px;
+    border-radius:999px; font-family:'Exo 2'; font-weight:800; font-style:italic; font-size:0.95rem;
+    background:linear-gradient(180deg, var(--cell-top), var(--cell-bot));
+    border:2px solid var(--tc);
+  }
+  .turn-strip.me{
+    background:linear-gradient(180deg, var(--red-top), var(--red-bot));
+    border-color:#fff; animation:handpulse 1.2s infinite;
+  }
+  @keyframes handpulse{0%,100%{transform:scale(1);} 50%{transform:scale(1.04);}}
+  .player-status{text-align:center; color:var(--ink-dim); padding:30px 16px; font-size:1rem; line-height:1.5;}
+  .player-status.hot{
+    color:var(--gold); font-family:'Exo 2'; font-weight:800; font-style:italic; font-size:1.15rem;
+    animation:handpulse 1.2s infinite;
+  }
+  .hand-confirm{
+    text-align:center; font-family:'Exo 2'; font-weight:800; font-style:italic;
+    color:var(--gold); font-size:1.05rem; padding:14px;
+    background:rgba(255,210,74,0.08); border:1px solid rgba(255,210,74,0.4); border-radius:14px;
+  }
+  .buzzer-btn{
+    width:100%; padding:44px 20px; border:none; border-radius:26px; cursor:pointer;
+    font-family:'Exo 2'; font-weight:900; font-style:italic; font-size:2rem; line-height:1.25;
+    color:#fff; background:linear-gradient(180deg, var(--red-top), var(--red-bot));
+    box-shadow:0 14px 34px rgba(224,35,78,0.45), inset 0 2px 0 rgba(255,255,255,0.3);
+    -webkit-user-select:none; user-select:none; animation:handpulse 1.4s infinite;
+  }
+  .buzzer-btn:active{transform:scale(0.94);}
+  .buzzer-btn span{display:block; font-size:0.8rem; font-weight:600; font-style:normal; opacity:0.8; margin-top:8px; letter-spacing:0.08em;}
+  .q-card{
+    margin-bottom:18px; padding:20px 18px; border-radius:18px; text-align:center;
+    background:linear-gradient(180deg, var(--panel-2), #081432);
+    border:1px solid rgba(58,99,192,0.5);
+    animation:qIn .3s ease;
+  }
+  @keyframes qIn{from{opacity:0; transform:translateY(-10px);} to{opacity:1; transform:none;}}
+  .q-card-head{
+    font-family:'Exo 2'; font-weight:800; font-style:italic; font-size:0.7rem;
+    letter-spacing:0.08em; color:var(--gold); text-transform:uppercase; margin-bottom:10px;
+  }
+  .q-card-hint{color:var(--gold); font-size:0.72rem; font-weight:700; text-transform:uppercase; letter-spacing:0.06em; margin-bottom:8px;}
+  .q-card-text{font-family:'Exo 2'; font-weight:800; font-size:1.15rem; line-height:1.4;}
+  .q-card-answer{
+    margin-top:14px; padding:10px 14px; border-radius:12px;
+    font-family:'Exo 2'; font-weight:800; font-size:1rem; color:var(--green);
+    background:rgba(61,220,132,0.1); border:1px solid rgba(61,220,132,0.45);
+  }
+  .conn-note{display:block; text-align:center; font-size:0.75rem; color:var(--green); margin-top:24px;}
+  .podium{display:grid; gap:12px; margin-bottom:26px;}
+  .rank-row{
+    display:flex; align-items:center; justify-content:space-between;
+    padding:16px 22px; border-radius:16px;
+    background:linear-gradient(180deg, var(--panel-2), var(--panel));
+    border:1px solid rgba(58,99,192,0.35);
+  }
+  .rank-row.first{border-color:rgba(255,210,74,0.6); box-shadow:0 0 26px rgba(255,210,74,0.15);}
+  .rank-left{display:flex; align-items:center; gap:14px;}
+  .rank-num{font-family:'Exo 2'; font-weight:900; font-style:italic; font-size:1.25rem; color:var(--gold);}
+  .rank-name{font-weight:700;}
+  .rank-score{font-family:'Exo 2'; font-weight:900; font-style:italic; font-size:1.25rem;}
+  .rank-score.neg{color:var(--wrong);}
+</style>
+</head>
+<body>
+<div class="stage">
+
+  <!-- Code eingeben -->
+  <div class="card" id="joinView">
+    <h1 class="hero">DEIN BUZZER</h1>
+    <p class="hero-sub">Gib den 6-stelligen Spielcode vom Gamemaster ein</p>
+    <input type="text" id="joinCode" class="code-field" maxlength="6" placeholder="XXXXXX" autocomplete="off" autocapitalize="characters">
+    <div class="error-msg" id="joinError"></div>
+    <button class="btn-red" id="joinBtn">BEITRETEN</button>
+  </div>
+
+  <!-- Warten -->
+  <div class="card hidden" id="waiting">
+    <h1 class="hero">VERBINDE…</h1>
+    <p class="hero-sub">Warte auf den Gamemaster.</p>
+    <button class="btn-ghost" id="leaveBtn">← Code ändern</button>
+  </div>
+
+  <!-- Team wählen -->
+  <div class="card hidden" id="teamPick">
+    <h1 class="hero">WELCHES TEAM BIST DU?</h1>
+    <p class="hero-sub">Dein Handy wird zum Buzzer für dieses Team</p>
+    <div class="team-pick-grid" id="teamPickGrid"></div>
+  </div>
+
+  <!-- Spieler-Ansicht -->
+  <div id="playerView" class="hidden">
+    <div class="player-card" id="playerCard">
+      <div class="player-team" id="playerTeam"></div>
+      <div class="player-score" id="playerScore">0</div>
+      <div class="player-score-label">PUNKTE</div>
+    </div>
+    <div class="turn-strip" id="turnStrip"></div>
+    <div id="playerZone"></div>
+    <span class="conn-note">● live verbunden</span>
+  </div>
+
+  <!-- Endstand -->
+  <div class="card hidden" id="endedView">
+    <h1 class="hero">ENDSTAND</h1>
+    <div class="podium" id="podium"></div>
+    <button class="btn-red" id="homeBtn">NEU BEITRETEN</button>
+  </div>
+
+</div>
+<script>
+/* ============ Netzwerk (eigener Server, WebSocket) ============ */
+const WS_URL = (location.protocol === "https:" ? "wss://" : "ws://") + location.host;
+function normCode(code){ return String(code).trim().toUpperCase(); }
+const _conns = {};
+function _ensureConn(code){
+  code = normCode(code);
+  let c = _conns[code];
+  if(c && c.ws && (c.ws.readyState===WebSocket.OPEN || c.ws.readyState===WebSocket.CONNECTING)) return c;
+  c = _conns[code] || { listeners:new Set(), onconnect:new Set(), queue:[] };
+  _conns[code] = c;
+  const ws = new WebSocket(WS_URL);
+  c.ws = ws;
+  ws.onopen = () => {
+    ws.send(JSON.stringify({type:"__join", code:code}));
+    while(c.queue.length) ws.send(c.queue.shift());
+    c.onconnect.forEach(fn=>{try{fn();}catch(e){}});
+  };
+  ws.onmessage = (e) => {
+    let p; try{ p = JSON.parse(e.data); }catch(err){ return; }
+    if(p && p.type==="__join") return;
+    c.listeners.forEach(fn=>{try{fn(p);}catch(err){}});
+  };
+  ws.onclose = () => { setTimeout(()=>{ if(_conns[code] && _conns[code].listeners.size>0) _ensureConn(code); }, 1500); };
+  ws.onerror = () => { try{ ws.close(); }catch(e){} };
+  return c;
+}
+async function netPublish(code, payload){
+  const c = _ensureConn(code);
+  const data = JSON.stringify(payload);
+  if(c.ws.readyState===WebSocket.OPEN) c.ws.send(data); else c.queue.push(data);
+  return true;
+}
+function netSubscribe(code, onMessage, onConnect){
+  const c = _ensureConn(code);
+  if(onMessage) c.listeners.add(onMessage);
+  if(onConnect) c.onconnect.add(onConnect);
+  if(onConnect && c.ws.readyState===WebSocket.OPEN){ try{ onConnect(); }catch(e){} }
+  return { close:function(){
+    if(onMessage) c.listeners.delete(onMessage);
+    if(onConnect) c.onconnect.delete(onConnect);
+    if(c.listeners.size===0){ try{ c.ws.close(); }catch(e){} delete _conns[normCode(code)]; }
+  }};
+}
+
+/* ============ Sounds (Web Audio) ============ */
+let _audioCtx = null;
+function _ctx(){
+  if(!_audioCtx){
+    const AC = window.AudioContext || window.webkitAudioContext;
+    if(!AC) return null;
+    _audioCtx = new AC();
+  }
+  if(_audioCtx.state === "suspended") _audioCtx.resume();
+  return _audioCtx;
+}
+["pointerdown","touchstart","keydown"].forEach((ev)=>
+  window.addEventListener(ev, ()=>_ctx(), {once:true, passive:true})
+);
+function _tone(freq,start,dur,type,vol,endFreq){
+  const ctx=_ctx(); if(!ctx) return;
+  const t0=ctx.currentTime+start;
+  const osc=ctx.createOscillator(); const gain=ctx.createGain();
+  osc.type=type; osc.frequency.setValueAtTime(freq,t0);
+  if(endFreq) osc.frequency.exponentialRampToValueAtTime(endFreq,t0+dur);
+  gain.gain.setValueAtTime(0,t0);
+  gain.gain.linearRampToValueAtTime(vol,t0+0.015);
+  gain.gain.exponentialRampToValueAtTime(0.001,t0+dur);
+  osc.connect(gain).connect(ctx.destination);
+  osc.start(t0); osc.stop(t0+dur+0.05);
+}
+function soundCorrect(){ _tone(523.25,0,0.16,"triangle",0.25); _tone(659.25,0.10,0.16,"triangle",0.25); _tone(783.99,0.20,0.30,"triangle",0.28); }
+function soundWrong(){ _tone(220,0,0.28,"sawtooth",0.16,140); _tone(110,0,0.34,"square",0.10,80); }
+function soundBuzz(){ _tone(880,0,0.12,"sine",0.30); _tone(1174.66,0.09,0.28,"sine",0.30); }
+
+/* ============ Spieler-Logik ============ */
+/* Punktwerte der Boards (Fragen sind absichtlich NICHT enthalten) */
+const BOARD_POINTS = [[100,200,300,400,500],[200,400,600,800,1000]];
+const TEAM_COLORS = ["#ff5470","#3ddc84","#4a9fff","#ffd24a","#b478ff","#ff9040","#2ee6d6","#ff6ad5"];
+const JOIN_KEY = "quizabend_buzzer_v1";
+
+let join = null;        // { code, team }
+let snap = null;
+let handSentFor = null;
+let lastHello = 0;
+let lastPhaseKey = null;
+let lastScore = null;
+let es = null;
+
+try{ join = JSON.parse(localStorage.getItem(JOIN_KEY)); }catch(e){}
+
+function saveJoin(){ try{ localStorage.setItem(JOIN_KEY, JSON.stringify(join)); }catch(e){} }
+function escapeHtml(s){ return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;"); }
+
+const views = ["joinView","waiting","teamPick","playerView","endedView"];
+function showOnly(id){ views.forEach((v)=>document.getElementById(v).classList.toggle("hidden", v!==id)); }
+
+/* ---------- Beitreten ---------- */
+document.getElementById("joinBtn").addEventListener("click", () => {
+  const errEl = document.getElementById("joinError");
+  errEl.textContent = "";
+  const code = document.getElementById("joinCode").value.trim().toUpperCase();
+  if(code.length !== 6){ errEl.textContent = "Der Code hat 6 Zeichen."; return; }
+  join = { code, team: null };
+  saveJoin();
+  connect();
+});
+document.getElementById("leaveBtn").addEventListener("click", resetToJoin);
+document.getElementById("homeBtn").addEventListener("click", resetToJoin);
+
+function resetToJoin(){
+  if(es){ try{ es.close(); }catch(e){} es = null; }
+  join = null; snap = null; handSentFor = null; lastPhaseKey = null; lastScore = null;
+  try{ localStorage.removeItem(JOIN_KEY); }catch(e){}
+  showOnly("joinView");
+}
+
+function connect(){
+  showOnly("waiting");
+  if(es){ try{ es.close(); }catch(e){} }
+  es = netSubscribe(join.code, onNetMessage, sendHello);
+  sendHello();
+}
+
+function sendHello(){
+  const now = Date.now();
+  if(now - lastHello < 5000) return;
+  lastHello = now;
+  netPublish(join.code, { from:"p", type:"hello" });
+}
+
+/* ---------- Empfang ---------- */
+function onNetMessage(msg){
+  if(!msg || msg.from !== "gm" || msg.type !== "state") return;
+  const s = msg.s;
+  if(s.status === "ended"){ showEnded(s.teams); return; }
+  if(s.status === "reset"){ resetToJoin(); return; }
+  snap = s;
+  reactToPhaseChange();
+  render();
+}
+
+function reactToPhaseChange(){
+  const q = snap.q;
+  const key = q ? q.ci + "-" + q.qi + ":" + q.phase + ":" + (q.at ?? "") : "none";
+  if(key === lastPhaseKey) return;
+  const prev = lastPhaseKey;
+  lastPhaseKey = key;
+  if(prev === null) return;
+  if(q && q.phase === "steal-select") soundWrong();
+  else if(q && q.phase === "resolved"){
+    if(q.ok === true) soundCorrect();
+    else if(q.ok === false) soundWrong();
+  }
+}
+
+/* ---------- Team wählen ---------- */
+function renderTeamPick(){
+  showOnly("teamPick");
+  const grid = document.getElementById("teamPickGrid");
+  grid.innerHTML = "";
+  snap.teams.forEach(([name], i) => {
+    const btn = document.createElement("button");
+    btn.className = "steal-btn";
+    btn.style.setProperty("--tc", TEAM_COLORS[i]);
+    btn.textContent = name;
+    btn.addEventListener("click", () => {
+      join.team = i;
+      saveJoin();
+      lastScore = null;
+      render();
+    });
+    grid.appendChild(btn);
+  });
+}
+
+/* ---------- Rendering ---------- */
+function render(){
+  if(!snap) return;
+  if(join.team === null || join.team === undefined){ renderTeamPick(); return; }
+  showOnly("playerView");
+
+  const myName = snap.teams[join.team][0];
+  const myScore = snap.teams[join.team][1];
+  const myColor = TEAM_COLORS[join.team];
+
+  document.getElementById("playerCard").style.setProperty("--tc", myColor);
+  document.getElementById("playerTeam").textContent = myName;
+  const scoreEl = document.getElementById("playerScore");
+  scoreEl.textContent = myScore;
+  scoreEl.classList.toggle("neg", myScore < 0);
+  if(lastScore !== null && lastScore !== myScore){
+    scoreEl.classList.remove("pop");
+    void scoreEl.offsetWidth;
+    scoreEl.classList.add("pop");
+  }
+  lastScore = myScore;
+
+  const strip = document.getElementById("turnStrip");
+  if(snap.turn === join.team){
+    strip.textContent = "🎯 DU BIST AM ZUG!";
+    strip.className = "turn-strip me";
+    strip.style.setProperty("--tc", myColor);
+  }else{
+    strip.textContent = "AM ZUG: " + snap.teams[snap.turn][0].toUpperCase();
+    strip.className = "turn-strip";
+    strip.style.setProperty("--tc", TEAM_COLORS[snap.turn]);
+  }
+
+  renderZone();
+}
+
+function renderZone(){
+  const zone = document.getElementById("playerZone");
+  const q = snap.q;
+  if(!q){
+    zone.innerHTML = '<div class="player-status">Warte auf die nächste Frage…</div>';
+    return;
+  }
+  const pts = BOARD_POINTS[snap.bi][q.qi];
+  const half = pts / 2;
+  const qKey = q.ci + "-" + q.qi;
+
+  /* Fragekarte: Kategorie, Punkte und der live mitgesendete Fragetext */
+  let html =
+    '<div class="q-card">' +
+      '<div class="q-card-head">' + escapeHtml(q.cat || "") + " · " + pts + " PUNKTE</div>" +
+      (q.rev ? '<div class="q-card-hint">Gesucht: die passende Frage zu dieser Antwort!</div>' : "") +
+      '<div class="q-card-text">' + escapeHtml(q.text || "") + "</div>" +
+      (q.phase === "resolved" && q.ans
+        ? '<div class="q-card-answer">' + escapeHtml(q.ans) + "</div>"
+        : "") +
+    "</div>";
+
+  if(q.phase === "answering"){
+    const isMe = q.at === join.team;
+    html +=
+      '<div class="player-status' + (isMe ? " hot" : "") + '">' +
+      (isMe ? "🔥 IHR SEID GEFRAGT!" : escapeHtml(snap.teams[q.at][0]) + " antwortet…") +
+      "</div>";
+  }
+
+  if(q.phase === "steal-select"){
+    const iTried = q.tried.includes(join.team);
+    const alreadySent = handSentFor === qKey;
+    if(iTried){
+      html += '<div class="player-status">Euer Team hatte diese Frage schon.</div>';
+    }else if(alreadySent){
+      html += '<div class="hand-confirm">✋ Meldung gesendet – der Gamemaster entscheidet!</div>';
+    }else{
+      html +=
+        '<button class="buzzer-btn" id="handBtn">✋<br>MELDEN!<br><span>+' + half + " / −" + half + "</span></button>";
+    }
+  }
+
+  if(q.phase === "resolved"){
+    html += '<div class="player-status">' + escapeHtml(q.res || "") + "</div>";
+  }
+
+  zone.innerHTML = html;
+
+  const handBtn = document.getElementById("handBtn");
+  if(handBtn){
+    handBtn.addEventListener("click", () => {
+      handSentFor = qKey;
+      soundBuzz();
+      if(navigator.vibrate) navigator.vibrate(80);
+      netPublish(join.code, { from:"p", type:"hand", team:join.team, q:qKey });
+      render();
+    });
+  }
+}
+
+/* ---------- Endstand ---------- */
+function showEnded(teams){
+  showOnly("endedView");
+  const ranked = [...teams].sort((a,b)=>b[1]-a[1]);
+  const podium = document.getElementById("podium");
+  podium.innerHTML = "";
+  ranked.forEach(([name,score], i) => {
+    const row = document.createElement("div");
+    row.className = "rank-row" + (i===0 ? " first" : "");
+    row.innerHTML =
+      '<div class="rank-left">' +
+        '<span class="rank-num">#' + (i+1) + "</span>" +
+        '<span class="rank-name">' + escapeHtml(name) + "</span>" +
+      "</div>" +
+      '<span class="rank-score' + (score<0 ? " neg" : "") + '">' + score + "</span>";
+    podium.appendChild(row);
+  });
+}
+
+/* ---------- Wiedereinstieg nach Neuladen ---------- */
+if(join && join.code){
+  connect();
+}
+</script>
+</body>
+</html>

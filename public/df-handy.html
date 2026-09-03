@@ -1,0 +1,642 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#0a0e1a">
+<title>Der Dümmste fliegt · Handy</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Exo+2:ital,wght@0,600;0,800;1,800;1,900&family=Work+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0a0e1a; --tile:#151b2c; --tile-border:#232c44;
+    --cyan:#2ee6d6; --pink:#ff2e63; --gold:#ffd24a;
+    --ink:#f5f7ff; --ink-dim:#8b95b3; --green:#3ddc84;
+    --red-top:#e0234e; --red-bot:#8f0f26;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  button,input{touch-action:manipulation;}
+  body{
+    background:radial-gradient(ellipse at 50% 0%, #141c33 0%, var(--bg) 60%);
+    color:var(--ink); font-family:'Work Sans', sans-serif; min-height:100vh;
+    -webkit-tap-highlight-color:transparent;
+  }
+  .stage{max-width:480px; margin:0 auto; padding:22px 16px 50px;}
+  .hidden{display:none !important;}
+  .df-title{
+    display:block; text-align:center; margin:0 auto 20px; width:fit-content;
+    font-family:'Exo 2'; font-weight:900; font-style:italic; letter-spacing:0.04em;
+    font-size:1.35rem; color:#fff; padding:8px 20px; border-radius:12px;
+    background:linear-gradient(180deg,#1a2340,#0d1326);
+    border:2px solid rgba(46,230,214,0.5);
+    box-shadow:0 0 20px rgba(46,230,214,0.3);
+  }
+  .card{
+    padding:28px 24px; margin-top:3vh;
+    background:linear-gradient(180deg,#161e33,#0e1424);
+    border:1px solid var(--tile-border); border-radius:20px;
+    box-shadow:0 26px 60px rgba(0,0,0,0.55);
+  }
+  .sub{text-align:center; color:var(--ink-dim); font-size:0.88rem; margin:0 0 18px; line-height:1.5;}
+  .btn{
+    font-family:'Exo 2'; font-weight:800; font-style:italic; letter-spacing:0.05em;
+    border:none; cursor:pointer; color:#fff; border-radius:999px;
+    padding:15px 24px; font-size:1rem; width:100%;
+    transition:transform .12s ease;
+  }
+  .btn:active{transform:scale(0.96);}
+  .btn.red{background:linear-gradient(180deg,var(--red-top),var(--red-bot)); box-shadow:0 6px 18px rgba(224,35,78,0.35);}
+  .btn.ghost{background:transparent; border:1px solid var(--tile-border); color:var(--ink-dim); font-size:0.8rem; padding:10px; margin-top:12px;}
+  .code-field{
+    width:100%; padding:15px; border-radius:14px; margin-bottom:10px;
+    border:1px solid var(--tile-border); background:rgba(255,255,255,0.05);
+    color:var(--ink); font-family:'Exo 2'; font-weight:900; font-style:italic;
+    font-size:1.5rem; text-align:center; letter-spacing:0.35em; text-transform:uppercase;
+  }
+  .code-field:focus{outline:none; border-color:var(--cyan);}
+  .error{color:var(--pink); text-align:center; font-size:0.85rem; min-height:1.2em; margin-bottom:10px;}
+  .pick-grid{display:grid; grid-template-columns:1fr 1fr; gap:10px;}
+  .pick-btn{
+    font-family:'Exo 2'; font-weight:800; font-style:italic; font-size:0.95rem;
+    padding:16px 10px; border-radius:999px; cursor:pointer; color:var(--ink);
+    background:linear-gradient(180deg,#1e3f86,#0d1d44);
+    border:2px solid var(--pc); box-shadow:0 4px 12px rgba(0,0,0,0.35);
+  }
+  .me-card{
+    text-align:center; padding:22px; border-radius:18px; margin-bottom:14px;
+    background:linear-gradient(180deg,#161e33,#0e1424);
+    border:2px solid var(--pc); box-shadow:0 0 24px color-mix(in srgb, var(--pc) 25%, transparent);
+  }
+  .me-name{font-family:'Exo 2'; font-weight:800; font-style:italic; color:var(--pc); font-size:1.1rem; text-transform:uppercase;}
+  .me-hearts{font-size:1.5rem; margin-top:6px; letter-spacing:4px;}
+  .me-hearts .lost{filter:grayscale(1) brightness(0.5); opacity:0.45;}
+  .status-chip{
+    display:block; width:fit-content; margin:0 auto 14px; padding:7px 18px; border-radius:999px;
+    font-family:'Exo 2'; font-weight:800; font-style:italic; font-size:0.78rem; letter-spacing:0.08em;
+    background:linear-gradient(180deg,#1a2340,#0d1326); border:1px solid rgba(46,230,214,0.45); color:var(--cyan);
+  }
+  .q-card{
+    padding:20px 18px; border-radius:18px; text-align:center; margin-bottom:14px;
+    background:linear-gradient(180deg,#161e33,#0b101f);
+    border:1px solid rgba(46,230,214,0.4);
+    animation:in .3s ease;
+  }
+  @keyframes in{from{opacity:0; transform:translateY(-10px);} to{opacity:1; transform:none;}}
+  .q-for{font-family:'Exo 2'; font-weight:800; font-style:italic; font-size:0.75rem; letter-spacing:0.06em;
+    color:var(--pc, var(--cyan)); text-transform:uppercase; margin-bottom:8px;}
+  .q-text{font-family:'Exo 2'; font-weight:800; font-size:1.1rem; line-height:1.4;}
+  .q-answer{
+    margin-top:12px; padding:10px 14px; border-radius:12px;
+    font-family:'Exo 2'; font-weight:800; font-size:0.95rem; color:var(--green);
+    background:rgba(61,220,132,0.1); border:1px solid rgba(61,220,132,0.45);
+  }
+  .q-result{margin-top:10px; font-size:0.85rem; font-weight:700;}
+  .q-result.good{color:var(--green);} .q-result.bad{color:var(--pink);}
+  .timer{
+    width:52px; height:52px; margin:0 auto 10px; border-radius:50%;
+    display:flex; align-items:center; justify-content:center;
+    font-family:'Exo 2'; font-weight:900; font-style:italic; font-size:1.2rem;
+    border:3px solid var(--cyan); color:var(--cyan);
+  }
+  .timer.low{border-color:var(--pink); color:var(--pink); animation:tp 1s infinite;}
+  @keyframes tp{0%,100%{transform:scale(1);} 50%{transform:scale(1.1);}}
+  .status{text-align:center; color:var(--ink-dim); padding:26px 10px; font-size:0.95rem; line-height:1.5;}
+  .status.hot{color:var(--gold); font-family:'Exo 2'; font-weight:800; font-style:italic; font-size:1.1rem;
+    animation:tp 1.2s infinite;}
+  .vote-title{
+    text-align:center; font-family:'Exo 2'; font-weight:900; font-style:italic;
+    font-size:1.1rem; color:var(--gold); margin-bottom:14px;
+  }
+  .vote-grid{display:grid; gap:10px;}
+  .vote-btn{
+    display:flex; justify-content:space-between; align-items:center;
+    font-family:'Exo 2'; font-weight:800; font-style:italic; font-size:0.95rem;
+    padding:15px 20px; border-radius:999px; cursor:pointer; color:var(--ink);
+    background:linear-gradient(180deg,#1e3f86,#0d1d44);
+    border:2px solid var(--pc); box-shadow:0 4px 12px rgba(0,0,0,0.35);
+  }
+  .vote-btn:active{transform:scale(0.97);}
+  .vote-sent{
+    text-align:center; font-family:'Exo 2'; font-weight:800; font-style:italic;
+    color:var(--gold); font-size:1rem; padding:14px; border-radius:14px;
+    background:rgba(255,210,74,0.08); border:1px solid rgba(255,210,74,0.4);
+  }
+  .out-banner{
+    text-align:center; font-family:'Exo 2'; font-weight:900; font-style:italic;
+    color:var(--pink); font-size:1.3rem; padding:16px; letter-spacing:0.15em;
+    text-shadow:0 0 16px rgba(255,46,99,0.6);
+  }
+  .conn{display:block; text-align:center; font-size:0.72rem; color:var(--green); margin-top:20px;}
+  .podium{display:grid; gap:10px; margin-bottom:20px;}
+  .rank{display:flex; justify-content:space-between; padding:14px 18px; border-radius:14px;
+    background:linear-gradient(180deg,#161e33,#0e1424); border:1px solid var(--tile-border); font-weight:700;}
+  .rank.first{border-color:rgba(255,210,74,0.6);}
+
+  /* Dauerhafte Herzen-Übersicht aller Spieler */
+  .players-strip{margin-top:16px;}
+  .strip-title{
+    text-align:center; font-family:'Exo 2'; font-weight:800; font-style:italic;
+    font-size:0.72rem; letter-spacing:0.08em; text-transform:uppercase;
+    color:var(--ink-dim); margin-bottom:8px;
+  }
+  .strip-list{display:grid; gap:6px;}
+  .strip-row{
+    display:flex; align-items:center; gap:9px; padding:8px 12px; border-radius:12px;
+    background:rgba(255,255,255,0.03); border:1px solid var(--tile-border);
+    border-left:4px solid var(--pc);
+  }
+  .strip-row.me{background:color-mix(in srgb, var(--pc) 14%, transparent); border-color:var(--pc);}
+  .strip-row.dead{opacity:0.5;}
+  .strip-dot{width:9px; height:9px; border-radius:50%; background:var(--pc); flex:none;}
+  .strip-name{
+    flex:1; font-weight:700; font-size:0.86rem; white-space:nowrap;
+    overflow:hidden; text-overflow:ellipsis;
+  }
+  .strip-hearts{font-size:0.95rem; letter-spacing:2px; flex:none;}
+  .strip-hearts .lost{filter:grayscale(1) brightness(0.5); opacity:0.4;}
+  .strip-out{
+    font-family:'Exo 2'; font-weight:900; font-style:italic; font-size:0.72rem;
+    color:var(--pink); letter-spacing:0.08em; flex:none;
+  }
+  .strip-spec{font-size:0.9rem; flex:none;}
+
+  /* Finale-Aufdeckung auf dem Handy */
+  .reveal{margin-bottom:18px;}
+  .rv-title{
+    text-align:center; font-family:'Exo 2'; font-weight:900; font-style:italic;
+    font-size:0.95rem; color:var(--gold); margin:6px 0 10px;
+  }
+  .rv-head{
+    display:grid; grid-template-columns:22px 1fr 30px 30px; gap:6px; align-items:end;
+    padding:0 8px 6px; border-bottom:1px solid var(--tile-border); margin-bottom:6px;
+    font-size:0.68rem; font-weight:800; color:var(--ink-dim);
+  }
+  .rv-head .rv-cell{text-align:center; color:var(--ink); word-break:break-word; white-space:normal;}
+  .rv-qa-head{text-transform:uppercase; letter-spacing:0.05em;}
+  .rv-row{
+    display:grid; grid-template-columns:22px 1fr 30px 30px; gap:6px; align-items:center;
+    padding:7px 8px; border-radius:9px; margin-bottom:5px;
+    background:rgba(255,255,255,0.03); border:1px solid var(--tile-border);
+  }
+  .rv-no{font-family:'Exo 2'; font-weight:900; font-style:italic; color:var(--gold); font-size:0.8rem; text-align:center;}
+  .rv-q{font-size:0.78rem; font-weight:600; line-height:1.25;}
+  .rv-a{font-size:0.72rem; color:var(--cyan); margin-top:1px;}
+  .rv-cell{text-align:center;}
+  .rv-mark{
+    display:inline-flex; align-items:center; justify-content:center;
+    width:22px; height:22px; border-radius:50%; font-size:0.78rem; font-weight:800;
+  }
+  .rv-mark.good{background:rgba(61,220,132,0.2); color:var(--green); border:1px solid rgba(61,220,132,0.55);}
+  .rv-mark.bad{background:rgba(255,46,99,0.18); color:var(--pink); border:1px solid rgba(255,46,99,0.5);}
+</style>
+</head>
+<body>
+<div class="stage">
+  <span class="df-title">DER DÜMMSTE FLIEGT</span>
+
+  <!-- Code eingeben -->
+  <div class="card" id="joinView">
+    <p class="sub">Gib den 6-stelligen Spielcode vom Gamemaster ein</p>
+    <input type="text" id="joinCode" class="code-field" maxlength="6" placeholder="XXXXXX" autocomplete="off" autocapitalize="characters">
+    <div class="error" id="joinError"></div>
+    <button class="btn red" id="joinBtn">BEITRETEN</button>
+  </div>
+
+  <!-- Warten -->
+  <div class="card hidden" id="waiting">
+    <p class="sub">Verbinde… Warte auf den Gamemaster.</p>
+    <button class="btn ghost" id="leaveBtn">← Code ändern</button>
+  </div>
+
+  <!-- Spieler wählen -->
+  <div class="card hidden" id="pickView">
+    <p class="sub">Wer bist du?</p>
+    <div class="pick-grid" id="pickGrid"></div>
+  </div>
+
+  <!-- Spiel -->
+  <div id="playView" class="hidden">
+    <div class="me-card" id="meCard">
+      <div class="me-name" id="meName"></div>
+      <div class="me-hearts" id="meHearts"></div>
+    </div>
+    <span class="status-chip" id="statusChip"></span>
+    <div id="zone"></div>
+    <div class="players-strip" id="playersStrip"></div>
+    <span class="conn">● live verbunden</span>
+  </div>
+
+  <!-- Ende -->
+  <div class="card hidden" id="endedView">
+    <div class="vote-title">👑 SIEGER: <span id="winName"></span></div>
+    <div class="podium" id="podium"></div>
+    <div class="reveal" id="handyReveal"></div>
+    <button class="btn red" id="againBtn">NEU BEITRETEN</button>
+  </div>
+</div>
+
+<script>
+/* ============ Netzwerk (eigener Server, WebSocket) ============ */
+const WS_URL = (location.protocol === "https:" ? "wss://" : "ws://") + location.host;
+function normCode(code){ return String(code).trim().toUpperCase(); }
+const _conns = {};
+function _ensureConn(code){
+  code = normCode(code);
+  let c = _conns[code];
+  if(c && c.ws && (c.ws.readyState===WebSocket.OPEN || c.ws.readyState===WebSocket.CONNECTING)) return c;
+  c = _conns[code] || { listeners:new Set(), onconnect:new Set(), queue:[] };
+  _conns[code] = c;
+  const ws = new WebSocket(WS_URL);
+  c.ws = ws;
+  ws.onopen = () => {
+    ws.send(JSON.stringify({type:"__join", code:code}));
+    while(c.queue.length) ws.send(c.queue.shift());
+    c.onconnect.forEach(fn=>{try{fn();}catch(e){}});
+  };
+  ws.onmessage = (e) => {
+    let p; try{ p = JSON.parse(e.data); }catch(err){ return; }
+    if(p && p.type==="__join") return;
+    c.listeners.forEach(fn=>{try{fn(p);}catch(err){}});
+  };
+  ws.onclose = () => { setTimeout(()=>{ if(_conns[code] && _conns[code].listeners.size>0) _ensureConn(code); }, 1500); };
+  ws.onerror = () => { try{ ws.close(); }catch(e){} };
+  return c;
+}
+async function netPublish(code, payload){
+  const c = _ensureConn(code);
+  const data = JSON.stringify(payload);
+  if(c.ws.readyState===WebSocket.OPEN) c.ws.send(data); else c.queue.push(data);
+  return true;
+}
+function netSubscribe(code, onMessage, onConnect){
+  const c = _ensureConn(code);
+  if(onMessage) c.listeners.add(onMessage);
+  if(onConnect) c.onconnect.add(onConnect);
+  if(onConnect && c.ws.readyState===WebSocket.OPEN){ try{ onConnect(); }catch(e){} }
+  return { close:function(){
+    if(onMessage) c.listeners.delete(onMessage);
+    if(onConnect) c.onconnect.delete(onConnect);
+    if(c.listeners.size===0){ try{ c.ws.close(); }catch(e){} delete _conns[normCode(code)]; }
+  }};
+}
+
+/* ============ Sounds ============ */
+let _audioCtx = null;
+function _ctx(){
+  if(!_audioCtx){
+    const AC = window.AudioContext || window.webkitAudioContext;
+    if(!AC) return null;
+    _audioCtx = new AC();
+  }
+  if(_audioCtx.state === "suspended") _audioCtx.resume();
+  return _audioCtx;
+}
+["pointerdown","touchstart","keydown"].forEach((ev)=>window.addEventListener(ev, ()=>_ctx(), {once:true, passive:true}));
+function _tone(f,s,d,t,v,ef){
+  const c=_ctx(); if(!c) return;
+  const t0=c.currentTime+s, o=c.createOscillator(), g=c.createGain();
+  o.type=t; o.frequency.setValueAtTime(f,t0);
+  if(ef) o.frequency.exponentialRampToValueAtTime(ef,t0+d);
+  g.gain.setValueAtTime(0,t0); g.gain.linearRampToValueAtTime(v,t0+0.015);
+  g.gain.exponentialRampToValueAtTime(0.001,t0+d);
+  o.connect(g).connect(c.destination); o.start(t0); o.stop(t0+d+0.05);
+}
+function soundCorrect(){ _tone(523.25,0,0.16,"triangle",0.25); _tone(659.25,0.10,0.16,"triangle",0.25); _tone(783.99,0.20,0.30,"triangle",0.28); }
+function soundWrong(){ _tone(220,0,0.28,"sawtooth",0.16,140); _tone(110,0,0.34,"square",0.10,80); }
+function soundBuzz(){ _tone(880,0,0.12,"sine",0.30); _tone(1174.66,0.09,0.28,"sine",0.30); }
+
+/* ============ Spieler-Logik ============ */
+const PLAYER_COLORS = ["#ff5470","#3ddc84","#4a9fff","#ffd24a","#b478ff","#ff9040","#2ee6d6","#ff6ad5","#9dff57","#ff4a4a","#57c8ff","#ffe14a"];
+const JOIN_KEY = "df_handy_v1";
+const QUESTION_SECONDS = 30;
+
+let join = null;         // { code, me }
+let snap = null;
+let lastHello = 0;
+let votedForRound = null;
+let lastQNum = null;
+let lastPhaseKey = null;
+let timerInterval = null, timerEnd = null;
+let es = null;
+
+try{ join = JSON.parse(localStorage.getItem(JOIN_KEY)); }catch(e){}
+
+function saveJoin(){ try{ localStorage.setItem(JOIN_KEY, JSON.stringify(join)); }catch(e){} }
+function escapeHtml(s){ return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;"); }
+
+const views = ["joinView","waiting","pickView","playView","endedView"];
+function showOnly(id){ views.forEach((v)=>document.getElementById(v).classList.toggle("hidden", v!==id)); }
+
+document.getElementById("joinBtn").addEventListener("click", () => {
+  const errEl = document.getElementById("joinError");
+  errEl.textContent = "";
+  const code = document.getElementById("joinCode").value.trim().toUpperCase();
+  if(code.length !== 6){ errEl.textContent = "Der Code hat 6 Zeichen."; return; }
+  join = { code, me: null };
+  saveJoin();
+  connect();
+});
+document.getElementById("leaveBtn").addEventListener("click", resetToJoin);
+document.getElementById("againBtn").addEventListener("click", resetToJoin);
+
+function resetToJoin(){
+  if(es){ try{ es.close(); }catch(e){} es = null; }
+  stopTimer();
+  join = null; snap = null; votedForRound = null; lastQNum = null; lastPhaseKey = null;
+  try{ localStorage.removeItem(JOIN_KEY); }catch(e){}
+  showOnly("joinView");
+}
+
+function connect(){
+  showOnly("waiting");
+  if(es){ try{ es.close(); }catch(e){} }
+  es = netSubscribe(join.code, onNetMessage, sendHello);
+  sendHello();
+}
+function sendHello(){
+  const now = Date.now();
+  if(now - lastHello < 5000) return;
+  lastHello = now;
+  netPublish(join.code, { from:"p", type:"hello" });
+}
+
+function onNetMessage(msg){
+  if(!msg || msg.from !== "gm" || msg.type !== "state") return;
+  const s = msg.s;
+  if(!s || s.g !== "df") return;
+  if(s.status === "reset"){ resetToJoin(); return; }
+  snap = s;
+  reactToChange();
+  render();
+}
+
+function reactToChange(){
+  const q = snap.q;
+  const key = (q ? q.num + ":" + q.phase : "none") + ":" + snap.mode;
+  if(key === lastPhaseKey) return;
+  const prev = lastPhaseKey;
+  lastPhaseKey = key;
+  if(prev === null) return;
+  if(q && q.phase === "resolved"){
+    if(q.ok) soundCorrect(); else soundWrong();
+  }
+  if(snap.mode === "vote" && !prev.endsWith(":vote")) soundBuzz();
+}
+
+/* ---------- Timer (lokal, startet bei neuer Frage) ---------- */
+function startTimer(){
+  stopTimer();
+  timerEnd = Date.now() + QUESTION_SECONDS * 1000;
+  timerInterval = setInterval(() => {
+    const el = document.getElementById("pTimer");
+    if(!el){ return; }
+    const s = Math.max(0, Math.ceil((timerEnd - Date.now())/1000));
+    el.textContent = s;
+    el.classList.toggle("low", s <= 10);
+    if(s === 0) stopTimer();
+  }, 250);
+}
+function stopTimer(){
+  if(timerInterval){ clearInterval(timerInterval); timerInterval = null; }
+}
+
+/* ---------- Rendering ---------- */
+function render(){
+  if(!snap) return;
+  if(snap.status === "ended"){ renderEnded(); return; }
+  if(join.me === null || join.me === undefined){ renderPick(); return; }
+  showOnly("playView");
+
+  const me = snap.players[join.me];
+  const color = PLAYER_COLORS[join.me % PLAYER_COLORS.length];
+  document.getElementById("meCard").style.setProperty("--pc", color);
+  document.getElementById("meName").textContent = me[0];
+  let hearts = "";
+  for(let h=0; h<3; h++) hearts += '<span class="' + (h < me[1] ? "" : "lost") + '">❤️</span>';
+  document.getElementById("meHearts").innerHTML = me[2] ? '<span class="out-banner">RAUS</span>' : hearts;
+
+  renderPlayersStrip();
+
+  const chip = document.getElementById("statusChip");
+  if(snap.mode === "lobby") chip.textContent = "📱 LOBBY";
+  else if(snap.mode === "round") chip.textContent = "RUNDE " + snap.round + " · FRAGE " + snap.roundDone + "/" + snap.roundTotal;
+  else if(snap.mode === "vote") chip.textContent = "🗳️ VOTING";
+  else if(snap.mode === "finale") chip.textContent = "🏆 FINALE";
+  else if(snap.mode === "stechen") chip.textContent = "⚔️ STECHEN";
+  else chip.textContent = "";
+
+  renderZone();
+}
+
+/* Dauerhaft sichtbare Herzen ALLER Spieler (auch auf jedem anderen Handy) */
+function renderPlayersStrip(){
+  const strip = document.getElementById("playersStrip");
+  if(!strip || !snap || !snap.players){ if(strip) strip.innerHTML = ""; return; }
+  const fin = snap.fin;
+  const inFinale = (snap.mode === "finale" || snap.mode === "stechen");
+  let html = '<div class="strip-title">Alle Spieler</div><div class="strip-list">';
+  snap.players.forEach((p, i) => {
+    const color = PLAYER_COLORS[i % PLAYER_COLORS.length];
+    const isMe = i === join.me;
+    const out = p[2] === 1;
+    const spectator = inFinale && fin && i !== fin.a && i !== fin.b;
+    let hearts = "";
+    for(let h=0; h<3; h++) hearts += '<span class="' + (h < p[1] ? "" : "lost") + '">❤</span>';
+    const badge = out ? '<span class="strip-out">RAUS</span>'
+      : spectator ? '<span class="strip-spec">👀</span>'
+      : '<span class="strip-hearts">' + hearts + "</span>";
+    html +=
+      '<div class="strip-row' + (isMe ? " me" : "") + (out ? " dead" : "") + '" style="--pc:' + color + '">' +
+        '<span class="strip-dot"></span>' +
+        '<span class="strip-name">' + escapeHtml(p[0]) + (isMe ? " (du)" : "") + "</span>" +
+        badge +
+      "</div>";
+  });
+  html += "</div>";
+  strip.innerHTML = html;
+}
+
+function renderZone(){
+  const zone = document.getElementById("zone");
+  const q = snap.q;
+
+  /* Neue Frage? Timer lokal starten */
+  if(q && q.phase === "question" && q.num !== lastQNum){
+    lastQNum = q.num;
+    startTimer();
+  }
+  if(!q || q.phase !== "question") stopTimer();
+
+  if(snap.mode === "lobby"){
+    zone.innerHTML = '<div class="status">✓ Du bist drin! Warte, bis der Gamemaster das Spiel startet…</div>';
+    return;
+  }
+
+  if(snap.mode === "vote"){ renderVoteZone(zone); return; }
+
+  if(!q){
+    const msg = (snap.mode === "finale" || snap.mode === "stechen")
+      ? "🤫 Finale läuft – Ergebnisse bleiben geheim! Warte auf die nächste Frage…"
+      : "Warte auf die nächste Frage…";
+    zone.innerHTML = '<div class="status">' + msg + '</div>';
+    return;
+  }
+
+  const isMe = q.p === join.me;
+  const color = PLAYER_COLORS[q.p % PLAYER_COLORS.length];
+  let head = "FRAGE FÜR " + escapeHtml(snap.players[q.p][0]).toUpperCase();
+  if(snap.mode === "finale" && q.fin) head = "FINALE · FRAGE " + q.fin.no + "/10 · " + escapeHtml(snap.players[q.p][0]).toUpperCase();
+  if(snap.mode === "stechen") head = "⚔️ STECHEN · " + escapeHtml(snap.players[q.p][0]).toUpperCase();
+
+  let html = "";
+  if(q.phase === "question"){
+    html += '<div class="timer" id="pTimer">' + QUESTION_SECONDS + "</div>";
+  }
+  html +=
+    '<div class="q-card">' +
+      '<div class="q-for" style="--pc:' + color + '">' + head + "</div>" +
+      '<div class="q-text">' + escapeHtml(q.text || "") + "</div>" +
+      (q.phase === "resolved" && q.ans ? '<div class="q-answer">' + escapeHtml(q.ans) + "</div>" : "") +
+      (q.phase === "resolved"
+        ? '<div class="q-result ' + (q.ok ? "good" : "bad") + '">' +
+            (q.ok ? "✓ Richtig!" : (q.to ? "⏰ Zeit abgelaufen!" : "✗ Falsch!")) +
+          "</div>"
+        : "") +
+    "</div>";
+
+  if(q.phase === "question" && isMe){
+    html += '<div class="status hot">🔥 DU BIST DRAN – 30 SEKUNDEN!</div>';
+  }
+  zone.innerHTML = html;
+}
+
+function renderVoteZone(zone){
+  const v = snap.vote;
+  if(!v){ zone.innerHTML = '<div class="status">Voting läuft…</div>'; return; }
+
+  /* Ergebnis schon da? */
+  if(v.result){
+    const p = snap.players[v.result.p];
+    zone.innerHTML =
+      '<div class="vote-title">🗳️ ENTSCHIEDEN</div>' +
+      '<div class="vote-sent">' + escapeHtml(p[0]) + " verliert ein Herz! (" + v.result.count + " Stimmen)</div>";
+    return;
+  }
+
+  const iAmOut = snap.players[join.me][2] === 1;
+  if(iAmOut){
+    zone.innerHTML =
+      '<div class="vote-title">🗳️ VOTING LÄUFT</div>' +
+      '<div class="status">Du bist raus und darfst nicht mehr abstimmen – zurücklehnen und zuschauen!</div>';
+    return;
+  }
+
+  const iVoted = v.voters.includes(join.me) || votedForRound === snap.round;
+  if(iVoted){
+    zone.innerHTML =
+      '<div class="vote-title">🗳️ VOTING LÄUFT</div>' +
+      '<div class="vote-sent">✓ Deine Stimme ist drin! (' + v.voters.length + " Stimmen bisher)</div>";
+    return;
+  }
+
+  /* Abstimmen: alle lebenden Spieler außer dir selbst, mit ✓/✗ der Runde */
+  let btns = "";
+  v.eligible.forEach((i) => {
+    if(i === join.me) return;
+    const marks = (snap.marks && snap.marks[i] ? snap.marks[i] : [])
+      .map((ok) => ok ? "✓" : "✗").join(" ");
+    btns +=
+      '<button class="vote-btn" data-i="' + i + '" style="--pc:' + PLAYER_COLORS[i % PLAYER_COLORS.length] + '">' +
+        '<span>' + escapeHtml(snap.players[i][0]) + "</span><span style='opacity:0.7; font-size:0.8rem;'>" + marks + "</span>" +
+      "</button>";
+  });
+  zone.innerHTML =
+    '<div class="vote-title">🗳️ WER HAT DIE DÜMMSTE ANTWORT GEGEBEN?</div>' +
+    '<div class="vote-grid">' + btns + "</div>";
+  zone.querySelectorAll(".vote-btn").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      votedForRound = snap.round;
+      soundBuzz();
+      if(navigator.vibrate) navigator.vibrate(60);
+      netPublish(join.code, { from:"p", type:"vote", voter:join.me, for:+btn.dataset.i, r:snap.round });
+      render();
+    });
+  });
+}
+
+function renderPick(){
+  showOnly("pickView");
+  const grid = document.getElementById("pickGrid");
+  grid.innerHTML = "";
+  snap.players.forEach((p, i) => {
+    const btn = document.createElement("button");
+    btn.className = "pick-btn";
+    btn.style.setProperty("--pc", PLAYER_COLORS[i % PLAYER_COLORS.length]);
+    btn.textContent = p[0];
+    btn.addEventListener("click", () => {
+      join.me = i;
+      saveJoin();
+      netPublish(join.code, { from:"p", type:"joined", me:i });
+      render();
+    });
+    grid.appendChild(btn);
+  });
+}
+
+function renderEnded(){
+  showOnly("endedView");
+  stopTimer();
+  document.getElementById("winName").textContent = snap.win !== null && snap.win !== undefined ? snap.players[snap.win][0] : "?";
+  const podium = document.getElementById("podium");
+  podium.innerHTML = "";
+  if(snap.fin && snap.fin.scores){
+    const rows = [
+      [snap.players[snap.fin.a][0], snap.fin.scores[0]],
+      [snap.players[snap.fin.b][0], snap.fin.scores[1]],
+    ].sort((x,y)=>y[1]-x[1]);
+    rows.forEach(([name,score], i) => {
+      const div = document.createElement("div");
+      div.className = "rank" + (i===0 ? " first" : "");
+      div.innerHTML = "<span>" + escapeHtml(name) + "</span><span>" + score + "/10</span>";
+      podium.appendChild(div);
+    });
+  }
+
+  /* Aufdeckung der 10 Finalfragen */
+  const rev = document.getElementById("handyReveal");
+  if(rev){
+    if(snap.fin && snap.fin.reveal && snap.fin.reveal.length){
+      const nameA = escapeHtml(snap.players[snap.fin.a][0]);
+      const nameB = escapeHtml(snap.players[snap.fin.b][0]);
+      const mark = (ok) => '<span class="rv-mark ' + (ok ? "good" : "bad") + '">' + (ok ? "✓" : "✗") + "</span>";
+      let rows = snap.fin.reveal.map((r, k) =>
+        '<div class="rv-row">' +
+          '<span class="rv-no">' + (k+1) + "</span>" +
+          '<div class="rv-qa"><div class="rv-q">' + escapeHtml(r.q) + "</div>" +
+            '<div class="rv-a">→ ' + escapeHtml(r.a) + "</div></div>" +
+          '<span class="rv-cell">' + mark(r.ra) + "</span>" +
+          '<span class="rv-cell">' + mark(r.rb) + "</span>" +
+        "</div>"
+      ).join("");
+      rev.innerHTML =
+        '<div class="rv-title">📋 Die 10 Finale-Fragen</div>' +
+        '<div class="rv-head"><span class="rv-no"></span><span class="rv-qa-head">Frage</span>' +
+          '<span class="rv-cell">' + nameA + "</span><span class=\"rv-cell\">" + nameB + "</span></div>" +
+        rows;
+    } else {
+      rev.innerHTML = "";
+    }
+  }
+}
+
+/* Wiedereinstieg nach Neuladen */
+if(join && join.code){
+  connect();
+  if(join.me !== null && join.me !== undefined){
+    netPublish(join.code, { from:"p", type:"joined", me:join.me });
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,363 @@
+/* ============================================================
+   DER DÜMMSTE FLIEGT · Design nach Vorlage:
+   dunkler Hintergrund, schwebende Blasen, Spieler-Kacheln mit
+   Herzen oben rechts, Namensschild unten, Cyan-Glow für aktiv
+   ============================================================ */
+
+:root{
+  --bg:#0a0e1a; --bg2:#111827;
+  --tile:#151b2c; --tile-border:#232c44;
+  --cyan:#2ee6d6; --pink:#ff2e63; --gold:#ffd24a;
+  --ink:#f5f7ff; --ink-dim:#8b95b3;
+  --green:#3ddc84; --red-top:#e0234e; --red-bot:#8f0f26;
+}
+
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;}
+button,input{touch-action:manipulation;}
+body{
+  background:radial-gradient(ellipse at 50% 0%, #141c33 0%, var(--bg) 60%);
+  color:var(--ink); font-family:'Work Sans', sans-serif; min-height:100vh;
+  -webkit-tap-highlight-color:transparent; overflow-x:hidden;
+}
+.hidden{display:none !important;}
+.stage{max-width:1100px; margin:0 auto; padding:22px 16px 60px; position:relative; z-index:1;}
+
+/* ---------- Schwebende Blasen im Hintergrund ---------- */
+.bubbles{position:fixed; inset:0; pointer-events:none; z-index:0;}
+.bubbles span{
+  position:absolute; border-radius:50%;
+  background:radial-gradient(circle at 35% 30%, rgba(255,255,255,0.14), rgba(255,255,255,0.03) 60%, transparent);
+  border:1px solid rgba(255,255,255,0.06);
+  animation:floaty 12s ease-in-out infinite;
+}
+.bubbles span:nth-child(1){width:90px;height:90px; top:8%; left:4%; animation-delay:0s;}
+.bubbles span:nth-child(2){width:60px;height:60px; top:20%; right:8%; animation-delay:-2s;}
+.bubbles span:nth-child(3){width:110px;height:110px; bottom:12%; left:8%; animation-delay:-4s;}
+.bubbles span:nth-child(4){width:70px;height:70px; bottom:22%; right:5%; animation-delay:-6s;}
+.bubbles span:nth-child(5){width:45px;height:45px; top:45%; left:2%; animation-delay:-8s;}
+.bubbles span:nth-child(6){width:55px;height:55px; top:60%; right:3%; animation-delay:-3s;}
+.bubbles span:nth-child(7){width:80px;height:80px; top:4%; left:40%; animation-delay:-5s;}
+.bubbles span:nth-child(8){width:40px;height:40px; bottom:6%; left:45%; animation-delay:-7s;}
+.bubbles span:nth-child(9){width:65px;height:65px; top:35%; right:20%; animation-delay:-9s;}
+.bubbles span:nth-child(10){width:50px;height:50px; bottom:35%; left:22%; animation-delay:-1s;}
+@keyframes floaty{
+  0%,100%{transform:translateY(0) translateX(0);}
+  50%{transform:translateY(-22px) translateX(8px);}
+}
+
+/* ---------- Titel ---------- */
+.df-title-wrap{text-align:center; margin-bottom:22px;}
+.df-title{
+  display:inline-block;
+  font-family:'Exo 2'; font-weight:900; font-style:italic; letter-spacing:0.04em;
+  font-size:clamp(1.6rem, 5vw, 2.6rem); color:#fff;
+  padding:10px 28px; border-radius:14px;
+  background:linear-gradient(180deg,#1a2340,#0d1326);
+  border:2px solid rgba(46,230,214,0.5);
+  box-shadow:0 0 26px rgba(46,230,214,0.3), inset 0 1px 0 rgba(255,255,255,0.1);
+  text-shadow:0 3px 8px rgba(0,0,0,0.6);
+}
+.df-title-hearts{
+  font-family:'Exo 2'; font-weight:800; font-style:italic; color:var(--pink);
+  font-size:1rem; margin-top:8px; letter-spacing:0.25em;
+  text-shadow:0 0 14px rgba(255,46,99,0.5);
+}
+
+/* ---------- Karten / Buttons ---------- */
+.df-card{
+  max-width:520px; margin:0 auto; padding:30px 26px;
+  background:linear-gradient(180deg,#161e33,#0e1424);
+  border:1px solid var(--tile-border); border-radius:20px;
+  box-shadow:0 26px 60px rgba(0,0,0,0.55);
+}
+.df-sub{text-align:center; color:var(--ink-dim); font-size:0.9rem; margin:0 0 18px; line-height:1.5;}
+.df-btn{
+  font-family:'Exo 2'; font-weight:800; font-style:italic; letter-spacing:0.05em;
+  border:none; cursor:pointer; color:#fff; border-radius:999px;
+  padding:13px 24px; font-size:0.95rem; transition:transform .12s ease, filter .12s ease;
+}
+.df-btn:active{transform:scale(0.96);}
+.df-btn.red{background:linear-gradient(180deg,var(--red-top),var(--red-bot)); box-shadow:0 6px 18px rgba(224,35,78,0.35);}
+.df-btn.cyan{background:linear-gradient(180deg,#2ee6d6,#128f84); color:#04211e; box-shadow:0 6px 18px rgba(46,230,214,0.3);}
+.df-btn.green{background:linear-gradient(180deg,#4ef29a,#1fae5f); color:#052b16; box-shadow:0 6px 18px rgba(61,220,132,0.3);}
+.df-btn.big{width:100%; padding:16px; font-size:1.1rem;}
+.df-btn:hover{filter:brightness(1.1);}
+.df-back{display:block; text-align:center; margin-top:14px; color:var(--ink-dim); font-size:0.8rem; text-decoration:none;}
+.df-back:hover{color:var(--ink);}
+.df-error{color:var(--pink); text-align:center; font-size:0.85rem; min-height:1.2em; margin-bottom:10px;}
+
+/* ---------- Setup ---------- */
+.df-add-row{display:flex; gap:10px; margin-bottom:16px;}
+.df-add-row input{
+  flex:1; padding:13px 16px; border-radius:999px; font-family:'Work Sans'; font-weight:600;
+  border:1px solid var(--tile-border); background:rgba(255,255,255,0.05); color:var(--ink); font-size:0.95rem;
+}
+.df-add-row input:focus{outline:none; border-color:var(--cyan);}
+.df-name-list{display:flex; flex-wrap:wrap; gap:8px; margin-bottom:16px; min-height:20px;}
+.df-name-tag{
+  display:inline-flex; align-items:center; gap:8px; padding:8px 8px 8px 16px; border-radius:999px;
+  background:rgba(46,230,214,0.08); border:1px solid rgba(46,230,214,0.35);
+  font-weight:600; font-size:0.85rem;
+}
+.df-name-tag button{
+  width:22px; height:22px; border-radius:50%; border:none; cursor:pointer;
+  background:rgba(255,46,99,0.2); color:var(--pink); font-weight:800; line-height:1;
+}
+
+/* ---------- Statusleiste ---------- */
+.df-statusbar{display:flex; align-items:center; gap:10px; margin-bottom:16px; flex-wrap:wrap;}
+.df-chip{
+  font-family:'Exo 2'; font-weight:800; font-style:italic; letter-spacing:0.08em; font-size:0.8rem;
+  padding:8px 18px; border-radius:999px;
+  background:linear-gradient(180deg,#1a2340,#0d1326);
+  border:1px solid rgba(46,230,214,0.45); color:var(--cyan);
+}
+.df-chip.round{border-color:rgba(255,210,74,0.5); color:var(--gold);}
+.df-reset{
+  margin-left:auto; background:transparent; border:1px solid var(--tile-border); color:var(--ink-dim);
+  border-radius:999px; padding:7px 16px; font-family:'Work Sans'; font-size:0.75rem; cursor:pointer;
+}
+.df-reset:hover{color:var(--pink); border-color:var(--pink);}
+
+/* ---------- Spieler-Grid (wie im Vorbild) ---------- */
+.df-grid{display:grid; grid-template-columns:repeat(auto-fit, minmax(180px, 1fr)); gap:14px;}
+.df-tile{
+  position:relative; border-radius:16px; overflow:hidden; min-height:140px;
+  background:
+    radial-gradient(circle at 50% 35%, color-mix(in srgb, var(--pc) 30%, transparent), transparent 70%),
+    linear-gradient(180deg, var(--tile), #0d1220);
+  border:2px solid var(--tile-border);
+  box-shadow:0 10px 26px rgba(0,0,0,0.45);
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  transition:border-color .2s ease, box-shadow .2s ease, transform .2s ease;
+}
+.df-tile.active{
+  border-color:var(--cyan);
+  box-shadow:0 0 22px rgba(46,230,214,0.5), 0 10px 26px rgba(0,0,0,0.45);
+  transform:translateY(-3px);
+}
+.df-tile.out{filter:grayscale(1) brightness(0.55);}
+.df-tile.out::after{
+  content:"RAUS"; position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
+  font-family:'Exo 2'; font-weight:900; font-style:italic; font-size:1.6rem; color:var(--pink);
+  background:rgba(0,0,0,0.35); letter-spacing:0.2em; text-shadow:0 0 16px rgba(255,46,99,0.7);
+}
+.df-avatar{
+  width:58px; height:58px; border-radius:50%; margin-bottom:8px;
+  display:flex; align-items:center; justify-content:center;
+  font-family:'Exo 2'; font-weight:900; font-size:1.4rem; color:#fff;
+  background:linear-gradient(180deg, var(--pc), color-mix(in srgb, var(--pc) 55%, #000));
+  border:2px solid rgba(255,255,255,0.2);
+  text-shadow:0 2px 4px rgba(0,0,0,0.4);
+}
+.df-hearts{
+  position:absolute; top:8px; right:8px; display:flex; gap:3px;
+  padding:5px 9px; border-radius:999px; background:rgba(0,0,0,0.45); font-size:0.85rem;
+}
+.df-heart{filter:drop-shadow(0 0 4px rgba(255,46,99,0.6));}
+.df-heart.lost{filter:grayscale(1) brightness(0.5); opacity:0.45;}
+.df-nameplate{
+  position:absolute; bottom:8px; left:50%; transform:translateX(-50%);
+  padding:4px 14px; border-radius:999px; background:rgba(0,0,0,0.65);
+  font-weight:700; font-size:0.8rem; white-space:nowrap; max-width:90%;
+  overflow:hidden; text-overflow:ellipsis;
+}
+.df-finale-score{
+  position:absolute; top:8px; left:8px; padding:4px 12px; border-radius:999px;
+  background:rgba(0,0,0,0.55); font-family:'Exo 2'; font-weight:900; font-style:italic;
+  color:var(--gold); font-size:0.95rem;
+}
+
+/* ---------- Fragen-Panel ---------- */
+.df-qpanel{
+  margin-bottom:18px; padding:24px 22px; border-radius:18px;
+  background:linear-gradient(180deg,#161e33,#0b101f);
+  border:1px solid rgba(46,230,214,0.4);
+  box-shadow:0 18px 44px rgba(0,0,0,0.5);
+  animation:dfIn .3s ease;
+}
+@keyframes dfIn{from{opacity:0; transform:translateY(-12px);} to{opacity:1; transform:none;}}
+.df-q-for{
+  text-align:center; font-family:'Exo 2'; font-weight:800; font-style:italic; font-size:0.85rem;
+  letter-spacing:0.06em; margin-bottom:10px; text-transform:uppercase;
+  color:var(--pc, var(--cyan));
+}
+.df-q-text{
+  font-family:'Exo 2'; font-weight:800; font-size:clamp(1.15rem, 3vw, 1.55rem);
+  text-align:center; line-height:1.4; margin-bottom:20px;
+}
+.df-q-controls{display:flex; justify-content:center; gap:12px; flex-wrap:wrap;}
+.df-peek-zone{margin-top:14px;}
+.df-peek-answer{
+  max-width:460px; margin:0 auto; text-align:center; padding:11px 16px; border-radius:12px;
+  font-weight:700; font-size:0.92rem; color:var(--gold);
+  background:rgba(255,210,74,0.08); border:1px dashed rgba(255,210,74,0.5);
+}
+.df-resolved-answer{
+  max-width:520px; margin:0 auto 16px; text-align:center; padding:14px 18px; border-radius:14px;
+  font-family:'Exo 2'; font-weight:800; font-size:1.05rem; color:var(--green);
+  background:rgba(61,220,132,0.1); border:1px solid rgba(61,220,132,0.45);
+  animation:dfPop .4s cubic-bezier(.2,1.4,.4,1);
+}
+@keyframes dfPop{from{opacity:0; transform:scale(0.85);} to{opacity:1; transform:scale(1);}}
+.df-result-line{text-align:center; color:var(--ink-dim); font-size:0.9rem; margin-bottom:16px;}
+.df-result-line.good{color:var(--green); font-weight:700;}
+.df-result-line.bad{color:var(--pink); font-weight:700;}
+.flash-good{animation:dfFlashGood .7s ease;}
+@keyframes dfFlashGood{25%{box-shadow:0 0 44px rgba(61,220,132,0.7); border-color:var(--green);}}
+.flash-bad{animation:dfFlashBad .55s ease;}
+@keyframes dfFlashBad{
+  0%,100%{transform:translateX(0);}
+  15%{transform:translateX(-9px);} 30%{transform:translateX(8px);}
+  45%{transform:translateX(-6px);} 60%{transform:translateX(5px);} 75%{transform:translateX(-3px);}
+}
+
+/* ---------- Overlays ---------- */
+.df-overlay{
+  position:fixed; inset:0; z-index:50; display:flex; align-items:center; justify-content:center;
+  background:rgba(4,7,15,0.88); padding:20px;
+}
+.df-elim-box{
+  max-width:480px; width:100%; text-align:center; padding:38px 30px;
+  background:linear-gradient(180deg,#161e33,#0b101f);
+  border:2px solid rgba(255,46,99,0.5); border-radius:22px;
+  box-shadow:0 0 40px rgba(255,46,99,0.25), 0 30px 70px rgba(0,0,0,0.6);
+  animation:dfPop .35s cubic-bezier(.2,1.4,.4,1);
+}
+.df-elim-title{
+  font-family:'Exo 2'; font-weight:900; font-style:italic; font-size:1.7rem;
+  color:var(--pink); text-shadow:0 0 18px rgba(255,46,99,0.6); margin-bottom:14px;
+}
+.df-finale-title{
+  font-family:'Exo 2'; font-weight:900; font-style:italic; font-size:1.9rem;
+  color:var(--gold); text-shadow:0 0 18px rgba(255,210,74,0.5); margin-bottom:14px;
+}
+.df-elim-name{
+  font-family:'Exo 2'; font-weight:900; font-style:italic; font-size:1.5rem; margin-bottom:20px;
+}
+.df-elim-name.gold{color:var(--gold); font-size:1.9rem;}
+
+/* ---------- Timer ---------- */
+.df-timer{
+  width:64px; height:64px; margin:0 auto 12px; border-radius:50%;
+  display:flex; align-items:center; justify-content:center;
+  font-family:'Exo 2'; font-weight:900; font-style:italic; font-size:1.5rem;
+  background:linear-gradient(180deg,#1a2340,#0d1326);
+  border:3px solid var(--cyan); color:var(--cyan);
+  box-shadow:0 0 18px rgba(46,230,214,0.35);
+}
+.df-timer.low{
+  border-color:var(--pink); color:var(--pink);
+  box-shadow:0 0 22px rgba(255,46,99,0.5);
+  animation:timerpulse 1s infinite;
+}
+@keyframes timerpulse{0%,100%{transform:scale(1);} 50%{transform:scale(1.1);}}
+
+/* ---------- Voting ---------- */
+.df-vote-title{
+  text-align:center; font-family:'Exo 2'; font-weight:900; font-style:italic;
+  font-size:1.25rem; color:var(--gold); margin-bottom:8px;
+  text-shadow:0 0 14px rgba(255,210,74,0.4);
+}
+/* Fortschritts-Anzeige (wie viele haben abgestimmt) */
+.df-vote-progress{display:flex; align-items:center; gap:12px; margin-bottom:6px;}
+.df-vote-progress-bar{
+  flex:1; height:10px; border-radius:999px; background:rgba(255,255,255,0.07); overflow:hidden;
+}
+.df-vote-progress-fill{
+  height:100%; border-radius:999px; background:linear-gradient(90deg, var(--cyan), #7af5ea);
+  box-shadow:0 0 12px rgba(46,230,214,0.4); transition:width .35s ease;
+}
+.df-vote-progress-label{
+  font-size:0.82rem; font-weight:700; color:var(--cyan); white-space:nowrap;
+}
+.df-vote-hint{text-align:center; color:var(--ink-dim); font-size:0.76rem; margin-bottom:14px;}
+
+.df-vote-list{display:grid; gap:9px; margin-bottom:20px;}
+.df-vote-row{
+  display:grid; grid-template-columns:minmax(120px, 210px) 1fr 40px; align-items:center; gap:12px;
+  padding:8px 10px; border-radius:12px; background:rgba(255,255,255,0.03);
+  border:1px solid var(--tile-border); border-left:4px solid var(--pc);
+  transition:background .2s ease, border-color .2s ease;
+}
+.df-vote-row.leading{
+  background:rgba(255,46,99,0.09); border-color:rgba(255,46,99,0.4); border-left-color:var(--pc);
+}
+.df-vote-info{display:flex; flex-direction:column; gap:3px; min-width:0;}
+.df-vote-name{
+  font-weight:700; font-size:0.9rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+}
+.df-vote-marks{display:flex; flex-wrap:wrap; gap:2px; min-height:18px;}
+.df-vote-nomark{color:var(--ink-dim); font-size:0.75rem;}
+.df-vote-bar{height:16px; border-radius:999px; background:rgba(255,255,255,0.06); overflow:hidden;}
+.df-vote-fill{
+  height:100%; border-radius:999px; min-width:0;
+  background:linear-gradient(90deg, var(--pink), #ff7aa0);
+  box-shadow:0 0 12px rgba(255,46,99,0.4);
+  transition:width .4s ease;
+}
+.df-vote-count{
+  font-family:'Exo 2'; font-weight:900; font-style:italic; font-size:1.15rem; text-align:right;
+}
+
+/* ---------- Finale-Aufdeckung (10 Fragen) ---------- */
+.df-rev-head{
+  display:grid; grid-template-columns:26px 1fr 58px 58px; align-items:end; gap:8px;
+  padding:0 10px 8px; border-bottom:1px solid var(--tile-border); margin-bottom:8px;
+}
+.df-rev-qa-head{font-size:0.78rem; color:var(--ink-dim); text-transform:uppercase; letter-spacing:0.05em;}
+.df-rev-head .df-rev-cell{
+  font-size:0.72rem; font-weight:800; color:var(--pc, var(--ink)); text-align:center; line-height:1.15;
+  white-space:normal; word-break:break-word;
+}
+.df-rev-list{display:grid; gap:6px; margin-bottom:20px; max-height:52vh; overflow-y:auto;}
+.df-rev-row{
+  display:grid; grid-template-columns:26px 1fr 58px 58px; align-items:center; gap:8px;
+  padding:8px 10px; border-radius:10px; background:rgba(255,255,255,0.03);
+  border:1px solid var(--tile-border);
+}
+.df-rev-no{
+  font-family:'Exo 2'; font-weight:900; font-style:italic; color:var(--gold); font-size:0.95rem; text-align:center;
+}
+.df-rev-qa{min-width:0;}
+.df-rev-q{font-size:0.86rem; font-weight:600; line-height:1.3;}
+.df-rev-a{font-size:0.78rem; color:var(--cyan); margin-top:2px;}
+.df-rev-cell{text-align:center;}
+.df-rev-mark{
+  display:inline-flex; align-items:center; justify-content:center;
+  width:26px; height:26px; border-radius:50%; font-size:0.9rem; font-weight:800;
+}
+.df-rev-mark.good{background:rgba(61,220,132,0.2); color:var(--green); border:1px solid rgba(61,220,132,0.55);}
+.df-rev-mark.bad{background:rgba(255,46,99,0.18); color:var(--pink); border:1px solid rgba(255,46,99,0.5);}
+
+/* ---------- Antwort-Marker (✓/✗ der laufenden Runde) ---------- */
+.df-mark{
+  display:inline-flex; align-items:center; justify-content:center;
+  width:18px; height:18px; border-radius:50%; font-size:0.65rem; font-weight:800;
+  margin-left:3px; vertical-align:1px;
+}
+.df-mark.good{background:rgba(61,220,132,0.2); color:var(--green); border:1px solid rgba(61,220,132,0.5);}
+.df-mark.bad{background:rgba(255,46,99,0.2); color:var(--pink); border:1px solid rgba(255,46,99,0.5);}
+.df-tile-marks{margin-top:6px; min-height:20px;}
+
+/* ---------- Lobby ---------- */
+.df-lobby-code{
+  text-align:center; font-family:'Exo 2'; font-weight:900; font-style:italic;
+  font-size:clamp(2.4rem, 8vw, 4rem); letter-spacing:0.25em; color:var(--gold);
+  text-shadow:0 0 26px rgba(255,210,74,0.5); margin:10px 0 14px;
+}
+.df-joined-dot{
+  position:absolute; top:10px; left:10px; width:11px; height:11px; border-radius:50%;
+  background:var(--green); box-shadow:0 0 8px var(--green);
+}
+
+/* ---------- Code-Chip ---------- */
+.df-chip.code{border-color:rgba(255,210,74,0.5); color:var(--gold); letter-spacing:0.14em;}
+
+@media (max-width:600px){
+  .df-grid{grid-template-columns:repeat(2, 1fr);}
+  .df-tile{min-height:120px;}
+  .df-q-controls{flex-direction:column;}
+  .df-btn{width:100%;}
+}
