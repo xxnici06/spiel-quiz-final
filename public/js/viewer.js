@@ -31,19 +31,6 @@ function sendHello() {
 netSubscribe(conn.code, onNetMessage, sendHello);
 sendHello();
 
-/* Beitritts-Hinweis (QR + Code) für Nachzügler einmalig aufbauen */
-function setupJoinHint() {
-  const box = document.getElementById("joinHint");
-  if (!box || !conn || !conn.code) return;
-  const base = location.origin.replace(/\/$/, "");
-  const link = base + "/jeopardy.html?code=" + conn.code;
-  document.getElementById("joinHintQr").src = "/qr?text=" + encodeURIComponent(link);
-  document.getElementById("joinHintUrl").textContent = base.replace(/^https?:\/\//, "");
-  document.getElementById("joinHintCode").textContent = "Code " + conn.code;
-  box.classList.remove("hidden");
-}
-setupJoinHint();
-
 function onNetMessage(msg) {
   if (!msg || msg.from !== "gm" || msg.type !== "state") return;
   const s = msg.s;

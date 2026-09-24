@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#20402f">
+<title>Zurück in die Schule · Handy</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Patrick+Hand&family=Work+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --wood:#7a5230; --wood-dark:#4f3213; --wood-light:#a06e3e;
+    --board:#20402f; --board-2:#17301f;
+    --chalk:#f4f1e8; --chalk-dim:#b0bda6;
+    --red:#e0574e; --red-dark:#9c342d; --green:#7bd88f; --green-dark:#2f8f4e; --gold:#ffd866;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  button,input{touch-action:manipulation; font-family:inherit;}
+  body{
+    background:radial-gradient(ellipse at 50% 0%, #2a5540 0%, var(--board) 60%, var(--board-2) 100%);
+    color:var(--chalk); font-family:'Patrick Hand','Work Sans',sans-serif; min-height:100vh;
+    -webkit-tap-highlight-color:transparent;
+  }
+  .stage{max-width:480px; margin:0 auto; padding:18px 14px 40px;}
+  .hidden{display:none !important;}
+  .title{
+    display:block; text-align:center; margin:0 auto 16px; width:fit-content;
+    font-family:'Patrick Hand',cursive; font-size:1.5rem; letter-spacing:0.03em; color:var(--chalk);
+    padding:6px 18px; border-bottom:3px dashed rgba(244,241,232,0.4);
+  }
+  .card{
+    padding:24px 20px; margin-top:2vh; border-radius:12px;
+    background:linear-gradient(180deg,#24463360,#1a362960);
+    border:8px solid var(--wood);
+    border-image:linear-gradient(180deg,var(--wood-light),var(--wood-dark)) 1;
+    box-shadow:0 20px 50px rgba(0,0,0,0.5);
+  }
+  .sub{text-align:center; color:var(--chalk-dim); font-size:1.05rem; margin:0 0 16px; line-height:1.5;}
+  .btn{
+    font-family:'Patrick Hand',cursive; font-size:1.15rem; border:none; cursor:pointer; color:#fff;
+    border-radius:12px; padding:14px 20px; width:100%;
+    box-shadow:0 5px 0 rgba(0,0,0,0.3); transition:transform .1s ease, filter .1s ease;
+  }
+  .btn:active{transform:translateY(3px); box-shadow:0 2px 0 rgba(0,0,0,0.3);}
+  .btn.green{background:linear-gradient(180deg,var(--green),var(--green-dark));}
+  .btn.red{background:linear-gradient(180deg,var(--red),var(--red-dark));}
+  .btn.wood{background:linear-gradient(180deg,var(--wood-light),var(--wood-dark)); color:#fff5e8;}
+  .btn.ghost{background:transparent; border:2px dashed rgba(244,241,232,0.3); color:var(--chalk-dim); font-size:1rem; box-shadow:none;}
+  .btn.ghost:active{transform:none;}
+  .btn:disabled{opacity:0.4; filter:grayscale(0.5);}
+  .code-field{
+    width:100%; padding:14px; border-radius:12px; margin-bottom:10px;
+    border:2px solid rgba(244,241,232,0.25); background:rgba(0,0,0,0.22); color:var(--chalk);
+    font-family:'Patrick Hand',cursive; font-size:1.7rem; text-align:center; letter-spacing:0.3em; text-transform:uppercase;
+  }
+  .code-field:focus{outline:none; border-color:var(--gold);}
+  .error{color:var(--red); text-align:center; font-size:1rem; min-height:1.2em; margin-bottom:8px;}
+  .pick-grid{display:grid; grid-template-columns:1fr 1fr; gap:10px;}
+  .pick-btn{
+    font-family:'Patrick Hand',cursive; font-size:1.1rem; padding:15px 8px; border-radius:12px; cursor:pointer;
+    color:var(--chalk); background:rgba(0,0,0,0.25); border:2px solid var(--pc); border-left:6px solid var(--pc);
+  }
+  /* me-card */
+  .me-card{
+    text-align:center; padding:16px; border-radius:12px; margin-bottom:12px;
+    background:linear-gradient(180deg,#24463360,#1a362960); border:3px solid var(--pc);
+  }
+  .me-name{font-family:'Patrick Hand',cursive; font-size:1.3rem; color:var(--pc);}
+  .me-hearts{font-size:1.4rem; margin-top:2px; letter-spacing:3px;}
+  .me-hearts .lost{filter:grayscale(1) brightness(0.6); opacity:0.4;}
+  .status-chip{
+    display:block; width:fit-content; margin:0 auto 12px; padding:6px 16px; border-radius:999px;
+    font-family:'Patrick Hand',cursive; font-size:0.95rem; background:rgba(0,0,0,0.28);
+    border:1px solid rgba(244,241,232,0.25); color:var(--chalk);
+  }
+  /* question */
+  .q-card{
+    padding:16px; border-radius:12px; margin-bottom:12px; text-align:center;
+    background:linear-gradient(180deg,#24463360,#12271b); border:2px solid rgba(244,241,232,0.2);
+  }
+  .q-subject{display:inline-block; padding:3px 14px; border-radius:999px; color:#12271b; background:var(--sc,#fff);
+    font-size:0.95rem; margin-bottom:8px;}
+  .q-text{font-size:1.35rem; line-height:1.35;}
+  .q-answer{margin-top:12px; padding:8px 14px; border-radius:10px; font-size:1.2rem; color:#12271b; background:var(--green);}
+  .q-result{margin-top:10px; font-size:1.3rem;}
+  .q-result.good{color:var(--green);} .q-result.bad{color:var(--red);}
+  /* timer */
+  .timer{
+    width:56px; height:56px; margin:0 auto 10px; border-radius:50%;
+    display:flex; align-items:center; justify-content:center;
+    font-family:'Patrick Hand',cursive; font-size:1.5rem; color:var(--chalk);
+    border:4px solid var(--gold);
+  }
+  .timer.low{border-color:var(--red); color:var(--red); animation:tp 1s infinite;}
+  @keyframes tp{0%,100%{transform:scale(1);}50%{transform:scale(1.12);}}
+  /* Tafel / canvas */
+  .tafel-wrap{
+    border-radius:10px; padding:8px; margin-bottom:10px;
+    background:linear-gradient(180deg,var(--wood-light),var(--wood-dark));
+    box-shadow:0 8px 20px rgba(0,0,0,0.4);
+  }
+  canvas#tafel{
+    display:block; width:100%; height:auto; border-radius:6px; background:#16281d;
+    touch-action:none; cursor:crosshair;
+  }
+  .tools{display:flex; gap:8px; margin-bottom:10px;}
+  .tools .btn{width:auto; flex:1; font-size:1rem; padding:11px;}
+  .joker-row{display:flex; gap:8px; margin-bottom:8px;}
+  .joker-row .btn{width:auto; flex:1; font-size:1rem; padding:12px;}
+  .hint{text-align:center; color:var(--chalk-dim); font-size:0.95rem; margin:6px 0;}
+  .locked{text-align:center; color:var(--green); font-size:1.15rem; padding:10px;}
+  .skipbox{text-align:center; color:var(--gold); font-size:1.2rem; padding:20px 10px;}
+  .status{text-align:center; color:var(--chalk-dim); padding:22px 10px; font-size:1.05rem; line-height:1.5;}
+  .status.hot{color:var(--gold); font-size:1.2rem;}
+  /* strip */
+  .strip{margin-top:14px;}
+  .strip-title{text-align:center; font-size:0.9rem; color:var(--chalk-dim); margin-bottom:6px; text-transform:uppercase; letter-spacing:0.06em;}
+  .strip-list{display:grid; gap:5px;}
+  .strip-row{display:flex; align-items:center; gap:8px; padding:6px 10px; border-radius:10px;
+    background:rgba(0,0,0,0.2); border-left:4px solid var(--pc);}
+  .strip-row.me{background:rgba(255,255,255,0.06);}
+  .strip-row.dead{opacity:0.5;}
+  .strip-name{flex:1; font-size:1rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+  .strip-hearts{font-size:0.95rem; letter-spacing:1px;}
+  .strip-hearts .lost{filter:grayscale(1) brightness(0.6); opacity:0.4;}
+  .strip-raus{color:var(--red); font-size:0.9rem;}
+  .conn{display:block; text-align:center; font-size:0.75rem; color:var(--green); margin-top:16px;}
+  /* Spy overlay */
+  .ov{position:fixed; inset:0; z-index:60; display:flex; align-items:center; justify-content:center;
+    background:rgba(6,16,10,0.9); padding:18px;}
+  .ov-box{max-width:420px; width:100%; text-align:center;}
+  .ov-title{font-family:'Patrick Hand',cursive; font-size:1.4rem; color:var(--gold); margin-bottom:12px;}
+  .spy-img-wrap{border-radius:8px; padding:6px; background:linear-gradient(180deg,var(--wood-light),var(--wood-dark)); margin-bottom:12px;}
+  .spy-img-wrap img{width:100%; border-radius:5px; background:#16281d; display:block; aspect-ratio:5/3; object-fit:contain;}
+  .spy-count{font-family:'Patrick Hand',cursive; font-size:2.4rem; color:var(--gold);}
+  .spy-pick{display:grid; gap:8px;}
+  /* end */
+  .podium{display:grid; gap:8px; margin-bottom:16px;}
+  .rank{display:flex; justify-content:space-between; padding:12px 16px; border-radius:10px;
+    background:rgba(0,0,0,0.22); border-left:5px solid var(--pc); font-size:1.1rem;}
+  .rank.first{border-color:var(--gold); background:rgba(255,216,102,0.14);}
+</style>
+</head>
+<body>
+<div class="stage">
+  <span class="title">📚 ZURÜCK IN DIE SCHULE</span>
+
+  <div class="card" id="joinView">
+    <p class="sub">Gib den 6-stelligen Code vom Lehrer ein</p>
+    <input type="text" id="joinCode" class="code-field" maxlength="6" placeholder="XXXXXX" autocomplete="off" autocapitalize="characters">
+    <div class="error" id="joinError"></div>
+    <button class="btn green" id="joinBtn">BEITRETEN</button>
+  </div>
+
+  <div class="card hidden" id="waiting">
+    <p class="sub">Verbinde … Warte auf den Lehrer.</p>
+    <button class="btn ghost" id="leaveBtn">← Code ändern</button>
+  </div>
+
+  <div class="card hidden" id="pickView">
+    <p class="sub">Wer bist du?</p>
+    <div class="pick-grid" id="pickGrid"></div>
+  </div>
+
+  <div id="playView" class="hidden">
+    <div class="me-card" id="meCard">
+      <div class="me-name" id="meName"></div>
+      <div class="me-hearts" id="meHearts"></div>
+    </div>
+    <span class="status-chip" id="statusChip"></span>
+    <div id="zone"></div>
+    <div class="strip" id="strip"></div>
+    <span class="conn">● live verbunden</span>
+  </div>
+
+  <div class="card hidden" id="endedView">
+    <div class="ov-title" style="color:var(--chalk); font-size:1.6rem;">🎓 <span id="winName"></span></div>
+    <div class="podium" id="podium"></div>
+    <button class="btn green" id="againBtn">NEU BEITRETEN</button>
+  </div>
+</div>
+
+<!-- Spy-Overlay -->
+<div class="ov hidden" id="spyOverlay">
+  <div class="ov-box" id="spyBox"></div>
+</div>
+
+<script>
+/* ============ Netzwerk (WebSocket, eigener Server) ============ */
+const WS_URL = (location.protocol === "https:" ? "wss://" : "ws://") + location.host;
+function normCode(c){ return String(c).trim().toUpperCase(); }
+const _conns = {};
+function _ensureConn(code){
+  code = normCode(code);
+  let c = _conns[code];
+  if(c && c.ws && (c.ws.readyState===WebSocket.OPEN || c.ws.readyState===WebSocket.CONNECTING)) return c;
+  c = _conns[code] || { listeners:new Set(), onconnect:new Set(), queue:[] };
+  _conns[code] = c;
+  const ws = new WebSocket(WS_URL);
+  c.ws = ws;
+  ws.onopen = () => { ws.send(JSON.stringify({type:"__join", code:code})); while(c.queue.length) ws.send(c.queue.shift()); c.onconnect.forEach(fn=>{try{fn();}catch(e){}}); };
+  ws.onmessage = (e) => { let p; try{p=JSON.parse(e.data);}catch(err){return;} if(p && p.type==="__join") return; c.listeners.forEach(fn=>{try{fn(p);}catch(err){}}); };
+  ws.onclose = () => { setTimeout(()=>{ if(_conns[code] && _conns[code].listeners.size>0) _ensureConn(code); }, 1500); };
+  ws.onerror = () => { try{ ws.close(); }catch(e){} };
+  return c;
+}
+function netPublish(code, payload){
+  const c = _ensureConn(code); const data = JSON.stringify(payload);
+  if(c.ws.readyState===WebSocket.OPEN) c.ws.send(data); else c.queue.push(data);
+}
+function netSubscribe(code, onMessage, onConnect){
+  const c = _ensureConn(code);
+  if(onMessage) c.listeners.add(onMessage);
+  if(onConnect) c.onconnect.add(onConnect);
+  if(onConnect && c.ws.readyState===WebSocket.OPEN){ try{onConnect();}catch(e){} }
+  return { close:function(){ if(onMessage)c.listeners.delete(onMessage); if(onConnect)c.onconnect.delete(onConnect);
+    if(c.listeners.size===0){ try{c.ws.close();}catch(e){} delete _conns[normCode(code)]; } } };
+}
+
+/* ============ Sounds ============ */
+let _ac=null;
+function _ctx(){ if(!_ac){ const A=window.AudioContext||window.webkitAudioContext; if(!A) return null; _ac=new A(); } if(_ac.state==="suspended")_ac.resume(); return _ac; }
+["pointerdown","touchstart","keydown"].forEach(ev=>window.addEventListener(ev, ()=>_ctx(), {once:true, passive:true}));
+function _tone(f,s,d,t,v,ef){ const c=_ctx(); if(!c)return; const t0=c.currentTime+s,o=c.createOscillator(),g=c.createGain(); o.type=t; o.frequency.setValueAtTime(f,t0); if(ef)o.frequency.exponentialRampToValueAtTime(ef,t0+d); g.gain.setValueAtTime(0,t0); g.gain.linearRampToValueAtTime(v,t0+0.015); g.gain.exponentialRampToValueAtTime(0.001,t0+d); o.connect(g).connect(c.destination); o.start(t0); o.stop(t0+d+0.05); }
+function soundCorrect(){ _tone(523,0,0.15,"triangle",0.25); _tone(659,0.1,0.15,"triangle",0.25); _tone(784,0.2,0.28,"triangle",0.28); }
+function soundWrong(){ _tone(220,0,0.28,"sawtooth",0.16,140); _tone(110,0,0.34,"square",0.10,80); }
+function soundBell(){ _tone(880,0,0.4,"sine",0.22); _tone(1320,0.02,0.5,"sine",0.16); }
+
+/* ============ Spieler-Logik ============ */
+const PLAYER_COLORS = ["#ff5470","#3ddc84","#4a9fff","#ffd24a","#b478ff","#ff9040","#2ee6d6","#ff6ad5","#9dff57","#ff4a4a","#57c8ff","#ffe14a"];
+const SUBJECT_COLORS = {"Geografie":"#7ec8ff","Natur und Technik":"#8ce99a","Mathematik":"#ffd866","Englisch":"#ff9db0","Deutsch":"#ffb27a","Französisch":"#c9a9ff"};
+const JOIN_KEY = "schule_handy_v1";
+const QUESTION_SECONDS = 60;
+
+let join = null, snap = null, sub = null;
+let lastHello = 0;
+let peerDraw = {};       // index -> dataURL (für Spicken)
+let zoneKey = null;      // was gerade gebaut ist
+let timerInt = null, timerEnd = 0;
+let lastPhaseKey = null;
+/* Zeichnen */
+let ctx = null, canvas = null, drawing = false, hasDrawn = false, lastSend = 0;
+let submittedLocal = false, skippedLocal = false;
+
+try{ join = JSON.parse(localStorage.getItem(JOIN_KEY)); }catch(e){}
+function saveJoin(){ try{ localStorage.setItem(JOIN_KEY, JSON.stringify(join)); }catch(e){} }
+function esc(s){ return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;"); }
+function $(id){ return document.getElementById(id); }
+
+const views = ["joinView","waiting","pickView","playView","endedView"];
+function showOnly(id){ views.forEach(v=>$(v).classList.toggle("hidden", v!==id)); }
+
+$("joinBtn").addEventListener("click", () => {
+  $("joinError").textContent = "";
+  const code = $("joinCode").value.trim().toUpperCase();
+  if(code.length !== 6){ $("joinError").textContent = "Der Code hat 6 Zeichen."; return; }
+  join = { code, me:null }; saveJoin(); connect();
+});
+$("leaveBtn").addEventListener("click", resetToJoin);
+$("againBtn").addEventListener("click", resetToJoin);
+
+function resetToJoin(){
+  if(sub){ try{sub.close();}catch(e){} sub=null; }
+  stopTimer();
+  join=null; snap=null; peerDraw={}; zoneKey=null; lastPhaseKey=null;
+  submittedLocal=false; skippedLocal=false;
+  try{ localStorage.removeItem(JOIN_KEY); }catch(e){}
+  showOnly("joinView");
+}
+function connect(){
+  showOnly("waiting");
+  if(sub){ try{sub.close();}catch(e){} }
+  sub = netSubscribe(join.code, onNet, sendHello);
+  sendHello();
+}
+function sendHello(){ const n=Date.now(); if(n-lastHello<5000) return; lastHello=n; netPublish(join.code,{from:"p",type:"hello"}); }
+
+function onNet(msg){
+  if(!msg) return;
+  /* fremde Tafeln für Spicken merken */
+  if(msg.from==="p" && (msg.type==="draw"||msg.type==="submit") && typeof msg.me==="number"){
+    if(msg.img) peerDraw[msg.me] = msg.img;
+  }
+  if(msg.from!=="gm" || msg.type!=="state") return;
+  const s = msg.s;
+  if(!s || s.g!=="schule") return;
+  if(s.status==="reset"){ resetToJoin(); return; }
+  snap = s;
+  reactToChange();
+  render();
+}
+
+function reactToChange(){
+  const key = snap.phase + ":" + (snap.qkey||"") ;
+  if(key===lastPhaseKey) return;
+  const prev = lastPhaseKey; lastPhaseKey = key;
+  peerDraw = peerDraw; // behalten
+  if(prev===null) return;
+  if(snap.phase==="reveal" && join.me!=null){
+    const m = snap.marks[join.me];
+    if(m==="ok") soundCorrect(); else if(m==="bad") soundWrong();
+  }
+}
+
+/* ---------- Timer (lokal) ---------- */
+function startTimer(){ stopTimer(); timerEnd = Date.now()+QUESTION_SECONDS*1000; }
+function stopTimer(){ if(timerInt){ clearInterval(timerInt); timerInt=null; } }
+function tickTimer(){
+  const el = $("schTimer"); if(!el) return;
+  const s = Math.max(0, Math.ceil((timerEnd-Date.now())/1000));
+  el.textContent = s; el.classList.toggle("low", s<=10);
+}
+
+/* ---------- Rendering ---------- */
+function render(){
+  if(!snap) return;
+  if(snap.status==="ended"){ renderEnded(); return; }
+  if(join.me===null || join.me===undefined){ renderPick(); return; }
+  showOnly("playView");
+
+  const me = snap.players[join.me];
+  const c = PLAYER_COLORS[join.me % PLAYER_COLORS.length];
+  $("meCard").style.setProperty("--pc", c);
+  $("meName").textContent = me[0];
+  let hearts=""; for(let h=0;h<2;h++) hearts += '<span class="'+(h<me[1]?"":"lost")+'">❤️</span>';
+  $("meHearts").innerHTML = me[2] ? '<span style="color:var(--red)">DURCHGEFALLEN</span>' : hearts;
+
+  const chip = $("statusChip");
+  chip.textContent = "KLASSE " + snap.grade + " · FRAGE " + (snap.qi+1) + "/" + snap.qtotal;
+
+  renderStrip();
+  renderZone();
+}
+
+function renderStrip(){
+  const el = $("strip");
+  let html = '<div class="strip-title">Klasse</div><div class="strip-list">';
+  snap.players.forEach((p,i)=>{
+    const c = PLAYER_COLORS[i%PLAYER_COLORS.length];
+    let hearts=""; for(let h=0;h<2;h++) hearts += '<span class="'+(h<p[1]?"":"lost")+'">❤</span>';
+    html += '<div class="strip-row'+(i===join.me?" me":"")+(p[2]?" dead":"")+'" style="--pc:'+c+'">'+
+      '<span class="strip-name">'+esc(p[0])+(i===join.me?" (du)":"")+'</span>'+
+      (p[2]?'<span class="strip-raus">durchgefallen</span>':'<span class="strip-hearts">'+hearts+'</span>')+
+      '</div>';
+  });
+  html += "</div>";
+  el.innerHTML = html;
+}
+
+function renderZone(){
+  let key;
+  if(snap.phase==="answering") key = "answer:"+snap.qkey;
+  else if(snap.phase==="reveal") key = "reveal:"+snap.qkey;
+  else key = "wait";
+  if(key!==zoneKey){ zoneKey=key; buildZone(); }
+  else updateZone();
+}
+
+function buildZone(){
+  const zone = $("zone");
+  const me = snap.players[join.me];
+  ctx=null; canvas=null; drawing=false;
+
+  if(snap.phase==="answering"){
+    submittedLocal=false; skippedLocal=false; hasDrawn=false;
+    startTimer();
+    if(!timerInt) timerInt=setInterval(tickTimer,250);
+
+    if(me[2]){ // raus
+      zone.innerHTML = '<div class="status">Du bist durchgefallen – lehn dich zurück und schau zu. 👀</div>';
+      return;
+    }
+    if(snap.skipped[join.me]){ zone.innerHTML = skipBoxHtml(); return; }
+
+    const sc = SUBJECT_COLORS[snap.subject]||"#fff";
+    zone.innerHTML =
+      '<div class="timer" id="schTimer">'+QUESTION_SECONDS+'</div>'+
+      '<div class="q-card"><span class="q-subject" style="--sc:'+sc+'">'+esc(snap.subject||"")+'</span>'+
+        '<div class="q-text">'+esc(snap.text||"")+'</div></div>'+
+      '<div class="tafel-wrap"><canvas id="tafel" width="640" height="384"></canvas></div>'+
+      '<div class="tools">'+
+        '<button class="btn ghost" id="clearBtn">🧽 Löschen</button>'+
+        '<button class="btn green" id="submitBtn">✓ Abgeben</button>'+
+      '</div>'+
+      '<div class="joker-row">'+
+        '<button class="btn wood" id="spyBtn"'+(me[3]?"":" disabled")+'>🔍 Spicken</button>'+
+        '<button class="btn wood" id="skipBtn"'+(me[4]?"":" disabled")+'>🙅 Jokertag</button>'+
+      '</div>'+
+      '<div class="hint" id="drawHint">Schreib deine Antwort auf die Tafel ✍️</div>';
+    setupCanvas();
+    $("clearBtn").addEventListener("click", clearCanvas);
+    $("submitBtn").addEventListener("click", submitAnswer);
+    $("spyBtn").addEventListener("click", openSpy);
+    $("skipBtn").addEventListener("click", useSkip);
+    tickTimer();
+    return;
+  }
+
+  stopTimer();
+
+  if(snap.phase==="reveal"){
+    const sc = SUBJECT_COLORS[snap.subject]||"#fff";
+    let res = "";
+    if(snap.skipped[join.me]) res = '<div class="q-result" style="color:var(--gold)">🙅 Jokertag – ausgesetzt</div>';
+    else if(me[2] && snap.marks[join.me]==null) res = '<div class="q-result bad">Du bist raus</div>';
+    else {
+      const m = snap.marks[join.me];
+      if(m==="ok") res = '<div class="q-result good">✓ Richtig!</div>';
+      else if(m==="bad") res = '<div class="q-result bad">✗ Falsch – 1 Leben weg</div>';
+      else res = '<div class="hint">Der Lehrer bewertet gerade …</div>';
+    }
+    zone.innerHTML =
+      '<div class="q-card"><span class="q-subject" style="--sc:'+sc+'">'+esc(snap.subject||"")+'</span>'+
+        '<div class="q-text">'+esc(snap.text||"")+'</div>'+
+        (snap.answer?'<div class="q-answer">Lösung: '+esc(snap.answer)+'</div>':"")+
+        res+
+      '</div>'+
+      '<div class="status">Warte auf die nächste Frage …</div>';
+    return;
+  }
+
+  zone.innerHTML = '<div class="status">Warte auf die nächste Frage …</div>';
+}
+
+function updateZone(){
+  /* im Answering: Joker-Buttons evtl. sperren, Skip beachten */
+  if(snap.phase==="answering"){
+    if(snap.skipped[join.me] && !skippedLocal){ zoneKey=null; renderZone(); return; }
+    const me = snap.players[join.me];
+    const sp=$("spyBtn"), sk=$("skipBtn");
+    if(sp) sp.disabled = !me[3];
+    if(sk) sk.disabled = !me[4];
+  } else if(snap.phase==="reveal"){
+    /* Bewertung kann sich ändern -> neu bauen */
+    zoneKey=null; renderZone();
+  }
+}
+
+function skipBoxHtml(){
+  return '<div class="q-card"><span class="q-subject" style="--sc:'+(SUBJECT_COLORS[snap.subject]||"#fff")+'">'+esc(snap.subject||"")+'</span>'+
+    '<div class="q-text">'+esc(snap.text||"")+'</div></div>'+
+    '<div class="skipbox">🙅 Du hast den <b>Jokertag</b> benutzt.<br>Diese Frage musst du nicht beantworten – ab der nächsten wieder!</div>';
+}
+
+/* ---------- Canvas / Zeichnen ---------- */
+function setupCanvas(){
+  canvas = $("tafel");
+  ctx = canvas.getContext("2d");
+  clearCanvasSilent();
+  const pos = (e) => {
+    const r = canvas.getBoundingClientRect();
+    const t = e.touches ? e.touches[0] : e;
+    return { x:(t.clientX-r.left)*(canvas.width/r.width), y:(t.clientY-r.top)*(canvas.height/r.height) };
+  };
+  const start = (e) => { if(submittedLocal) return; e.preventDefault(); drawing=true; const p=pos(e); ctx.beginPath(); ctx.moveTo(p.x,p.y); ctx.lineTo(p.x+0.1,p.y+0.1); ctx.stroke(); };
+  const move = (e) => { if(!drawing) return; e.preventDefault(); const p=pos(e); ctx.lineTo(p.x,p.y); ctx.stroke(); hasDrawn=true; };
+  const end = () => { if(!drawing) return; drawing=false; if(hasDrawn) sendDraw(false); };
+  canvas.addEventListener("pointerdown", start);
+  canvas.addEventListener("pointermove", move);
+  canvas.addEventListener("pointerup", end);
+  canvas.addEventListener("pointerleave", end);
+  canvas.addEventListener("pointercancel", end);
+}
+function chalkStyle(){ ctx.strokeStyle="#f4f1e8"; ctx.lineWidth=7; ctx.lineCap="round"; ctx.lineJoin="round"; ctx.shadowColor="rgba(244,241,232,0.4)"; ctx.shadowBlur=2; }
+function clearCanvasSilent(){ ctx.fillStyle="#16281d"; ctx.fillRect(0,0,canvas.width,canvas.height); chalkStyle(); }
+function clearCanvas(){ if(submittedLocal) return; clearCanvasSilent(); hasDrawn=false; sendDraw(false); }
+function sendDraw(force){
+  const now = Date.now();
+  if(!force && now-lastSend<350) return;
+  lastSend = now;
+  try{ netPublish(join.code, {from:"p", type:"draw", me:join.me, img:canvas.toDataURL("image/png"), q:snap.qkey}); }catch(e){}
+}
+function submitAnswer(){
+  if(submittedLocal || !canvas) return;
+  submittedLocal = true;
+  lastSend = 0;
+  try{ netPublish(join.code, {from:"p", type:"submit", me:join.me, img:canvas.toDataURL("image/png"), q:snap.qkey}); }catch(e){}
+  const b=$("submitBtn"); if(b){ b.textContent="✓ Abgegeben"; b.disabled=true; }
+  const h=$("drawHint"); if(h) h.textContent="✓ Abgegeben! Du kannst noch weiter zeichnen, bis aufgedeckt wird.";
+  submittedLocal=false; // weiterzeichnen erlauben; letzter Stand zählt
+  if(navigator.vibrate) navigator.vibrate(40);
+}
+
+/* ---------- Joker ---------- */
+function useSkip(){
+  const me = snap.players[join.me];
+  if(!me[4]) return;
+  if(!confirm("Jokertag einsetzen? Du musst diese Frage nicht beantworten.")) return;
+  skippedLocal = true;
+  netPublish(join.code, {from:"p", type:"joker", me:join.me, kind:"skip", q:snap.qkey});
+  zoneKey=null; renderZone();
+}
+function openSpy(){
+  const me = snap.players[join.me];
+  if(!me[3]) return;
+  const targets = snap.players.map((p,i)=>({p,i})).filter(o=>o.i!==join.me && !o.p[2]);
+  if(!targets.length) return;
+  const box = $("spyBox");
+  box.innerHTML = '<div class="ov-title">🔍 Wessen Tafel spicken?</div><div class="spy-pick">'+
+    targets.map(o=>'<button class="pick-btn" data-i="'+o.i+'" style="--pc:'+PLAYER_COLORS[o.i%PLAYER_COLORS.length]+'">'+esc(o.p[0])+'</button>').join("")+
+    '</div><button class="btn ghost" id="spyCancel" style="margin-top:12px;">Abbrechen</button>';
+  $("spyOverlay").classList.remove("hidden");
+  box.querySelectorAll(".pick-btn").forEach(b=> b.addEventListener("click", ()=> doSpy(+b.dataset.i)));
+  $("spyCancel").addEventListener("click", closeSpy);
+}
+function doSpy(i){
+  /* Joker verbraucht */
+  netPublish(join.code, {from:"p", type:"joker", me:join.me, kind:"spy"});
+  const box = $("spyBox");
+  const img = peerDraw[i];
+  let secs = 3;
+  box.innerHTML = '<div class="ov-title">🔍 '+esc(snap.players[i][0])+'s Tafel</div>'+
+    '<div class="spy-img-wrap"><img src="'+(img||"")+'" alt=""></div>'+
+    '<div class="spy-count" id="spyCount">'+secs+'</div>'+
+    (img?"":'<div class="hint">… hat noch nichts gezeichnet.</div>');
+  const iv = setInterval(()=>{
+    secs--;
+    const el=$("spyCount"); if(el) el.textContent=secs;
+    if(secs<=0){ clearInterval(iv); closeSpy(); }
+  },1000);
+}
+function closeSpy(){ $("spyOverlay").classList.add("hidden"); $("spyBox").innerHTML=""; }
+
+/* ---------- Auswahl & Ende ---------- */
+function renderPick(){
+  showOnly("pickView");
+  const grid = $("pickGrid"); grid.innerHTML="";
+  snap.players.forEach((p,i)=>{
+    const btn=document.createElement("button");
+    btn.className="pick-btn"; btn.style.setProperty("--pc", PLAYER_COLORS[i%PLAYER_COLORS.length]);
+    btn.textContent=p[0];
+    btn.addEventListener("click", ()=>{ join.me=i; saveJoin(); netPublish(join.code,{from:"p",type:"joined",me:i}); render(); });
+    grid.appendChild(btn);
+  });
+}
+function renderEnded(){
+  showOnly("endedView"); stopTimer();
+  $("winName").textContent = (snap.win!=null) ? snap.players[snap.win][0] : "Unentschieden";
+  const order = snap.players.map((p,i)=>i).sort((a,b)=>snap.players[b][1]-snap.players[a][1]);
+  $("podium").innerHTML = order.map((i,rank)=>{
+    const p=snap.players[i];
+    let hearts=""; for(let h=0;h<2;h++) hearts += (h<p[1]?"❤️":"🤍");
+    return '<div class="rank'+(rank===0 && snap.win!=null?" first":"")+'" style="--pc:'+PLAYER_COLORS[i%PLAYER_COLORS.length]+'">'+
+      '<span>'+(rank===0 && snap.win!=null?"🎓 ":"")+esc(p[0])+'</span>'+
+      '<span>'+(p[2]?"durchgefallen":hearts)+'</span></div>';
+  }).join("");
+}
+
+/* Wiedereinstieg nach Neuladen */
+if(join && join.code){
+  connect();
+  if(join.me!==null && join.me!==undefined){ netPublish(join.code,{from:"p",type:"joined",me:join.me}); }
+}
+</script>
+</body>
+</html>

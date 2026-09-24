@@ -1,35 +1,12 @@
 # 🎮 Spieleabend online stellen – Schritt für Schritt
 
-Dieselbe Vorgehensweise wie bisher: Code zu **GitHub**, dann bei **Render**
-deployen. Der Server liefert die Spielseiten aus **und** übernimmt das
-Live-Syncing zwischen Gamemaster, Gameboard und Handys. Keine Datenbank,
-kein Konto für die Mitspieler, nichts wird gespeichert.
+Diese Anleitung bringt dein Spiel dauerhaft ins Internet – kostenlos, ohne
+Ratenlimit, erreichbar für alle (auch von unterwegs). Der Server macht zwei
+Dinge: Er liefert die Spielseiten aus **und** übernimmt das Live-Syncing
+zwischen Gamemaster, Gameboard und Handys.
 
-Zeitaufwand beim ersten Mal ~15 Minuten. Danach reicht ein Datei-Upload,
-Render baut automatisch neu.
-
----
-
-## Was ist neu (Stand dieser Version)
-
-- **Jeopardy komplett überarbeitet:** 10 Themen-Sets statt 5, jedes mit
-  2 Runden. 100 verschiedene Kategorien, keine Wiederholungen. Die
-  Schwierigkeit steigt in **jeder** Kategorie sauber von leicht (Stufe 1)
-  bis knifflig (Stufe 5); Runde 2 liegt durchgehend ein Level höher.
-- **Mitspieler-Panel:** Knopf **„📱 Mitspieler"** unten rechts (auf der
-  Startseite und im Spiel). Zeigt **Beitritts-Link + QR-Code** und, sobald
-  ein Spiel läuft, den **Spielcode**. Handy-Kamera draufhalten – landet
-  direkt bei der Team-Auswahl.
-- **QR auf dem Gameboard:** Nachzügler können den Code direkt vom
-  Beamer/TV scannen.
-- **Bedienung für den Gamemaster:** Tastatur-Kürzel während einer Frage
-  (`1` richtig · `2` falsch · `A` Antwort ein-/ausblenden · `Esc` Feld
-  doch offen lassen · `Enter` weiter). Neuer Knopf „Feld doch offen
-  lassen", solange noch niemand geantwortet hat. Zähler „x/25 Felder"
-  in der Kopfzeile.
-- **Startseite:** Themen als 2-spaltige Übersicht mit Vorschau beider
-  Runden, „🎲 Zufall"-Knopf, zuletzt genutzte Team-Namen werden gemerkt.
-- „Der Dümmste fliegt" ist unverändert.
+Du brauchst nur zwei kostenlose Konten: **GitHub** (für den Code) und
+**Render** (fürs Hosting). Zeitaufwand: ~15 Minuten beim ersten Mal.
 
 ---
 
@@ -37,48 +14,54 @@ Render baut automatisch neu.
 
 ```
 spieleabend-server/
-├── server.js          ← der Server (liefert Seiten + Sync + QR-Codes)
-├── package.json        ← sagt Render, was zu installieren ist
+├── server.js          ← der Server (liefert Seiten + Sync)
+├── package.json       ← sagt Render, was zu installieren ist
 ├── .gitignore
-├── ANLEITUNG.md        ← diese Datei
-└── public/             ← das komplette Spiel
-    ├── index.html … (alle Spieldateien)
-    └── js/data.js      ← hier stehen alle Fragen
+├── ANLEITUNG.md       ← diese Datei
+└── public/            ← das komplette Spiel (Jeopardy + Der Dümmste fliegt)
+    ├── index.html
+    ├── ... (alle Spieldateien)
+    └── js/net.js      ← wurde für den eigenen Server umgebaut
 ```
 
-An den Dateien musst du **nichts** ändern. Nur hochladen und deployen.
+Du musst an den Dateien **nichts** ändern. Nur hochladen und deployen.
 
 ---
 
 ## Schritt 1 – GitHub-Repository anlegen
 
-1. Auf **https://github.com** einloggen (oder kostenlos registrieren).
-2. Oben rechts **+** → **New repository**.
-3. Namen vergeben, z. B. `spieleabend`.
-4. Auf **Public** lassen (Private geht auch, Public ist einfacher).
-5. **Create repository** klicken, Seite offen lassen.
+1. Geh auf **https://github.com** und logge dich ein (oder erstelle ein
+   kostenloses Konto).
+2. Klick oben rechts auf **+** → **New repository**.
+3. Gib einen Namen ein, z. B. `spieleabend`.
+4. Setz es auf **Public** (Private geht auch, Public ist einfacher).
+5. Klick **Create repository**. Lass die Seite offen.
 
 ## Schritt 2 – Dateien hochladen
 
-1. Auf der Repo-Seite **„uploading an existing file"** anklicken
+1. Auf der neuen Repo-Seite: Link **„uploading an existing file“** anklicken
    (oder **Add file → Upload files**).
-2. **Wichtig:** den **Inhalt** dieses Ordners hineinziehen, nicht den
-   Ordner selbst: `server.js`, `package.json`, `.gitignore` und den
-   ganzen Ordner `public`.
-3. Unten **Commit changes**. Warten, bis alle Dateien erscheinen.
+2. **Wichtig:** Zieh den **Inhalt** dieses Ordners hinein, nicht den Ordner
+   selbst. Am einfachsten: Markiere im entpackten `spieleabend-server`-Ordner
+   alle Elemente (`server.js`, `package.json`, `.gitignore`, `public`-Ordner)
+   und zieh sie ins Browser-Fenster.
+   - Der `public`-Ordner mit allen Unterdateien wird mit hochgeladen.
+   - Falls `.gitignore` nicht mitkommt (manche Systeme verstecken es): kein
+     Problem, es ist nicht zwingend nötig.
+3. Unten **Commit changes** klicken. Warte, bis alle Dateien erscheinen.
 
-Prüfen: `server.js`, `package.json` und der Ordner `public` müssen im
-Repo sichtbar sein. Liegen die Dateien lose herum oder fehlt `public`,
-Repo löschen und sauber neu hochladen.
+Prüfe kurz: Im Repo sollten `server.js`, `package.json` und der Ordner
+`public` sichtbar sein. Wenn `public` fehlt oder die Dateien einzeln lose
+herumliegen, lösch das Repo und lade nochmal sauber hoch.
 
 ## Schritt 3 – Bei Render deployen
 
-1. Auf **https://render.com** registrieren – am schnellsten mit
-   **„Sign in with GitHub"**. Render den Zugriff erlauben.
-2. **New +** → **Web Service**.
-3. Das `spieleabend`-Repository auswählen (ggf. **Connect** / Zugriff
-   erlauben).
-4. Felder prüfen bzw. eintragen:
+1. Geh auf **https://render.com** und registriere dich – am schnellsten mit
+   dem Button **„Sign in with GitHub“**. Erlaube Render den Zugriff.
+2. Klick auf **New +** → **Web Service**.
+3. Wähl dein `spieleabend`-Repository aus der Liste (ggf. **Connect** /
+   Zugriff erlauben).
+4. Render fragt ein paar Felder ab. Trag ein bzw. prüfe:
    - **Name:** frei wählbar, z. B. `spieleabend` (wird Teil der URL).
    - **Region:** Frankfurt (EU Central), falls verfügbar.
    - **Branch:** `main`.
@@ -86,59 +69,59 @@ Repo löschen und sauber neu hochladen.
    - **Build Command:** `npm install`
    - **Start Command:** `npm start`
    - **Instance Type:** **Free**.
-5. **Create Web Service** klicken.
-6. Render baut alles. 1–3 Minuten warten, bis oben **„Live"** in Grün steht.
+5. Klick unten **Create Web Service** (oder **Deploy**).
+6. Render baut jetzt alles. Warte 1–3 Minuten, bis oben **„Live“** in Grün
+   steht.
 
 ## Schritt 4 – Losspielen
 
-Oben auf der Render-Seite steht deine URL, z. B.
-`https://spieleabend.onrender.com`.
+Oben auf der Render-Seite steht deine URL, z. B.:
 
-- **Diese URL öffnen** – die Spielauswahl erscheint (Jeopardy oder Der
-  Dümmste fliegt). Das ist deine Gamemaster-Seite.
-- Bei Jeopardy: **Gamemaster** → Thema und Anzahl Teams wählen →
-  **Spiel starten**.
-- **Diese URL verschickst du an alle** – oder du klickst im Spiel auf
-  **„📱 Mitspieler"** und lässt alle den QR-Code scannen.
-- **Gameboard** (Beamer/TV): URL öffnen → **Gameboard** → Code eingeben.
+```
+https://spieleabend.onrender.com
+```
 
----
+- **Öffne diese URL** – die Spielauswahl erscheint. Das ist deine
+  Gamemaster-/Startseite.
+- **Diese URL verschickst du an alle.** Deine Freunde öffnen sie am Handy und
+  gehen dort auf „Mitspielen“. Kein Datei-Verschicken mehr nötig – alles läuft
+  über den Link.
 
-## Ablauf & Wertung
-
-Die Teams sind reihum am Zug und wählen ein Feld. **Richtig** = volle
-Punkte. **Falsch** = die Hälfte Abzug, dann dürfen sich die anderen Teams
-per Handy melden: richtig bringt die halben Punkte, falsch kostet ebenfalls
-die Hälfte. Nach Runde 1 geht es weiter zu Runde 2 mit doppelten Punkten.
+Fertig! Der Ablauf im Spiel bleibt exakt wie gehabt (Gamemaster starten →
+Code ansagen → Mitspieler/Gameboard geben den Code ein).
 
 ---
 
 ## Gut zu wissen
 
 - **Erster Aufruf nach längerer Pause dauert ~30 Sekunden.** Der kostenlose
-  Render-Server „schläft" nach ~15 Minuten ohne Nutzung ein. Tipp: URL
-  eine Minute vor dem Spieleabend schon einmal öffnen.
-- **Änderungen am Spiel:** neue Dateien ins GitHub-Repo laden – Render
-  baut automatisch neu.
-- **Eigene Fragen:** alles steht in `public/js/data.js`. Struktur ist
-  selbsterklärend, einfach Texte austauschen.
+  Render-Server „schläft“ nach ~15 Minuten ohne Nutzung ein und muss beim
+  nächsten Aufruf kurz aufwachen. Einfach die Startseite einmal öffnen und
+  kurz warten – danach läuft alles flüssig. Tipp: Ruf die URL 1 Minute vor
+  dem Spieleabend schon mal auf.
+
+- **Änderungen am Spiel:** Lädst du später neue Dateien ins GitHub-Repo hoch,
+  baut Render automatisch neu. Nichts weiter zu tun.
+
+- **Eigener Name:** Den Teil vor `.onrender.com` legst du in Schritt 3 über
+  das Feld **Name** fest.
+
 - **Kosten:** Der Free-Tier von Render kostet nichts und hat für einen
   Spieleabend keine relevanten Limits.
 
+---
+
 ## Wenn etwas nicht klappt
 
-- **„Build failed" bei Render:** `package.json` und `server.js` müssen
-  **direkt** im Repo liegen (nicht in einem Unterordner), `public`
-  daneben.
-- **Seite lädt, aber Mitspieler verbinden nicht:** die **Render-URL**
-  benutzen (`https://…onrender.com`), keine lokale Datei. Der Sync läuft
-  automatisch über den Server.
-- **QR-Code bleibt leer:** einmal neu deployen, damit `npm install` das
-  Paket `qrcode` mitzieht.
-- **Lokal testen (ohne Render):** mit Node auf dem PC im Ordner
-  `npm install`, dann `npm start`, und `http://localhost:3000` öffnen.
-  Andere Geräte im selben WLAN erreichen dich über
-  `http://<deine-lokale-IP>:3000` – das Mitspieler-Panel zeigt die
-  passende Adresse an.
+- **„Build failed“ bei Render:** Meist stimmt die Ordnerstruktur im Repo
+  nicht. `package.json` und `server.js` müssen **direkt** im Repo liegen (nicht
+  in einem Unterordner), und der `public`-Ordner daneben.
+- **Seite lädt, aber Mitspieler verbinden nicht:** Stell sicher, dass du die
+  **Render-URL** benutzt (`https://…onrender.com`) und nicht eine lokale Datei.
+  Über den Server läuft der Sync automatisch.
+- **Alles offline testen (ohne Render):** Wenn du Node auf dem PC hast, im
+  Ordner `npm install` und dann `npm start` ausführen und
+  `http://localhost:3000` öffnen. Andere Geräte im selben WLAN erreichen dich
+  dann über `http://<deine-lokale-IP>:3000`.
 
-Viel Spass beim Spieleabend! 🎉
+Viel Spaß beim Spieleabend! 🎉

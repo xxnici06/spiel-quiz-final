@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#20402f">
+<title>Zurück in die Schule</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Patrick+Hand&family=Work+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/schule.css">
+</head>
+<body>
+<div class="stage">
+
+  <div class="sch-title-wrap">
+    <div class="sch-title">📚 ZURÜCK IN DIE SCHULE 📚</div>
+    <div class="sch-title-sub">Von der 1. bis zur 12. Klasse – wer besteht?</div>
+  </div>
+
+  <!-- ROLLENWAHL -->
+  <div class="sch-card" id="roleView">
+    <p class="sch-sub">Wer bist du?</p>
+    <button class="sch-btn green big" id="roleGmBtn">🎙️ LEHRER / GAMEMASTER</button>
+    <div style="height:12px"></div>
+    <a class="sch-btn wood big sch-link" href="schule-handy.html" style="text-decoration:none;">📱 MITSPIELEN (HANDY)</a>
+    <p class="sch-sub" style="margin-top:16px; font-size:0.95rem;">Mitspieler öffnen <b>schule-handy.html</b> auf dem Handy – dort schreiben sie ihre Antwort auf die Tafel.</p>
+    <a class="sch-back" href="index.html">← Zur Spielauswahl</a>
+  </div>
+
+  <!-- SETUP -->
+  <div class="sch-card hidden" id="setupView">
+    <p class="sch-sub">Wer geht zur Schule? (2–10 Spieler · je 2 Leben ❤ · 2 Joker 🔍🙅)</p>
+    <div class="sch-add-row">
+      <input type="text" id="nameInput" maxlength="14" placeholder="Name…">
+      <button class="sch-btn green" id="addBtn">+ Hinzufügen</button>
+    </div>
+    <div class="sch-name-list" id="nameList"></div>
+    <div class="sch-error" id="setupError"></div>
+    <button class="sch-btn red big" id="startBtn">SCHULE BEGINNEN</button>
+    <button class="sch-btn ghost" id="backToRoleBtn" style="margin-top:10px;">← Zurück</button>
+  </div>
+
+  <!-- SPIEL -->
+  <div id="gameView" class="hidden">
+    <div class="sch-statusbar">
+      <span class="sch-chip grade" id="gradeChip">KLASSE 1</span>
+      <span class="sch-chip" id="subjectChip"></span>
+      <span class="sch-chip" id="qCountChip">FRAGE 1/3</span>
+      <span class="sch-chip code" id="codeChip"></span>
+      <button class="sch-reset" id="resetBtn">Zurücksetzen</button>
+    </div>
+
+    <div class="sch-board" id="board">
+      <div class="sch-timer" id="timer">60</div>
+      <div class="sch-subject-badge" id="boardSubject"></div>
+      <div class="sch-question" id="boardQuestion"></div>
+      <div id="boardAnswer"></div>
+    </div>
+
+    <div class="sch-hint" id="phaseHint"></div>
+    <div class="sch-controls" id="controls"></div>
+
+    <div class="sch-grid" id="playerGrid"></div>
+  </div>
+
+  <!-- KLASSE GESCHAFFT (Overlay) -->
+  <div class="sch-overlay hidden" id="gradeOverlay">
+    <div class="sch-overlay-box">
+      <div class="sch-ov-title">🔔 VERSETZT! 🔔</div>
+      <div class="sch-ov-big" id="gradeOvText"></div>
+      <button class="sch-btn green big" id="gradeContinueBtn">WEITER →</button>
+    </div>
+  </div>
+
+  <!-- ELIMINIERUNG (Overlay) -->
+  <div class="sch-overlay hidden" id="elimOverlay">
+    <div class="sch-overlay-box">
+      <div class="sch-ov-title">✏️ DURCHGEFALLEN ✏️</div>
+      <div class="sch-ov-list" id="elimList"></div>
+      <button class="sch-btn red big" id="elimContinueBtn">WEITER →</button>
+    </div>
+  </div>
+
+  <!-- SIEGER (Overlay) -->
+  <div class="sch-overlay hidden" id="winnerOverlay">
+    <div class="sch-overlay-box">
+      <div class="sch-crown">🎓</div>
+      <div class="sch-ov-title">KLASSENBESTE:R</div>
+      <div class="sch-ov-big" id="winnerName"></div>
+      <div class="sch-standings" id="standings"></div>
+      <button class="sch-btn green big" id="newGameBtn">NEUES SPIEL</button>
+      <a class="sch-back" href="index.html">← Zur Spielauswahl</a>
+    </div>
+  </div>
+
+</div>
+<script src="js/schule-data.js"></script>
+<script src="js/net.js"></script>
+<script src="js/sound.js"></script>
+<script src="js/schule.js"></script>
+</body>
+</html>

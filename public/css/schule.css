@@ -1,0 +1,231 @@
+/* ============================================================
+   ZURÜCK IN DIE SCHULE · Design
+   Tafel-Grün, Kreide-Schrift, Holzrahmen. Schulzimmer-Vibe.
+   ============================================================ */
+
+:root{
+  --wood:#7a5230; --wood-dark:#4f3213; --wood-light:#a06e3e;
+  --board:#20402f; --board-2:#1a3626; --board-edge:#0f2016;
+  --chalk:#f4f1e8; --chalk-dim:#b9c6ad;
+  --red:#e0574e; --red-dark:#9c342d;
+  --green:#7bd88f; --green-dark:#2f8f4e;
+  --gold:#ffd866;
+  /* Fach-Kreidefarben */
+  --geo:#7ec8ff; --nat:#8ce99a; --mat:#ffd866;
+  --eng:#ff9db0; --deu:#ffb27a; --fra:#c9a9ff;
+}
+
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;}
+button,input{touch-action:manipulation; font-family:inherit;}
+body{
+  background:
+    repeating-linear-gradient(90deg, rgba(0,0,0,0.05) 0 2px, transparent 2px 60px),
+    radial-gradient(ellipse at 50% -10%, #2a5540 0%, var(--board) 55%, var(--board-2) 100%);
+  color:var(--chalk);
+  font-family:'Patrick Hand', 'Work Sans', sans-serif;
+  min-height:100vh;
+  -webkit-tap-highlight-color:transparent;
+}
+.stage{max-width:1240px; margin:0 auto; padding:20px 16px 60px;}
+.hidden{display:none !important;}
+
+/* ---------- Titel ---------- */
+.sch-title-wrap{text-align:center; margin:8px 0 22px;}
+.sch-title{
+  display:inline-block; font-family:'Patrick Hand', cursive;
+  font-size:clamp(2rem, 6vw, 3.2rem); letter-spacing:0.04em; color:var(--chalk);
+  text-shadow:0 2px 0 rgba(0,0,0,0.25), 1px 1px 0 rgba(255,255,255,0.15);
+  border-bottom:4px dashed rgba(244,241,232,0.35); padding-bottom:6px;
+}
+.sch-title-sub{color:var(--chalk-dim); font-size:1.05rem; margin-top:8px;}
+
+/* ---------- Karten (Rolle / Setup) ---------- */
+.sch-card{
+  max-width:520px; margin:3vh auto 0; padding:30px 26px; border-radius:14px;
+  background:linear-gradient(180deg, #24463360, #1c3a2960);
+  border:10px solid var(--wood);
+  border-image:linear-gradient(180deg, var(--wood-light), var(--wood-dark)) 1;
+  box-shadow:0 24px 60px rgba(0,0,0,0.5), inset 0 0 0 2px rgba(0,0,0,0.25);
+}
+.sch-sub{text-align:center; color:var(--chalk-dim); font-size:1.05rem; margin:0 0 18px; line-height:1.5;}
+.sch-sub b{color:var(--chalk);}
+
+/* ---------- Buttons ---------- */
+.sch-btn{
+  font-family:'Patrick Hand', cursive; font-size:1.15rem; letter-spacing:0.03em;
+  border:none; cursor:pointer; color:#fff; border-radius:12px;
+  padding:14px 26px; width:100%;
+  box-shadow:0 6px 0 rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.25);
+  transition:transform .1s ease, filter .1s ease;
+}
+.sch-btn:active{transform:translateY(3px); box-shadow:0 3px 0 rgba(0,0,0,0.3);}
+.sch-btn.green{background:linear-gradient(180deg,var(--green),var(--green-dark));}
+.sch-btn.red{background:linear-gradient(180deg,var(--red),var(--red-dark));}
+.sch-btn.wood{background:linear-gradient(180deg,var(--wood-light),var(--wood-dark)); color:#fff5e8;}
+.sch-btn.big{font-size:1.35rem; padding:18px 26px;}
+.sch-btn.ghost{
+  background:transparent; border:2px dashed rgba(244,241,232,0.3);
+  color:var(--chalk-dim); box-shadow:none; font-size:1rem;
+}
+.sch-btn.ghost:active{transform:none;}
+.sch-link{
+  display:block; text-align:center; text-decoration:none; margin-top:16px;
+  color:var(--chalk-dim); font-size:1rem;
+}
+
+/* ---------- Setup: Namen ---------- */
+.sch-add-row{display:flex; gap:10px; margin-bottom:14px;}
+.sch-add-row input{
+  flex:1; padding:13px 14px; border-radius:10px; font-size:1.1rem;
+  border:2px solid rgba(244,241,232,0.25); background:rgba(0,0,0,0.2);
+  color:var(--chalk); font-family:'Patrick Hand', cursive;
+}
+.sch-add-row input:focus{outline:none; border-color:var(--gold);}
+.sch-add-row .sch-btn{width:auto; padding:13px 18px; font-size:1rem;}
+.sch-name-list{display:flex; flex-wrap:wrap; gap:8px; margin-bottom:16px; min-height:10px;}
+.sch-name-chip{
+  display:flex; align-items:center; gap:8px; padding:7px 12px; border-radius:999px;
+  background:rgba(0,0,0,0.25); border:1px solid var(--pc, rgba(244,241,232,0.3));
+  border-left:5px solid var(--pc, var(--chalk)); font-size:1rem;
+}
+.sch-name-chip button{
+  background:none; border:none; color:var(--red); cursor:pointer; font-size:1.1rem; line-height:1;
+}
+.sch-error{color:var(--red); text-align:center; min-height:1.3em; margin-bottom:10px; font-size:1rem;}
+
+/* ---------- Statusleiste ---------- */
+.sch-statusbar{
+  display:flex; flex-wrap:wrap; align-items:center; gap:10px; margin-bottom:16px;
+}
+.sch-chip{
+  font-family:'Patrick Hand', cursive; font-size:1rem; letter-spacing:0.02em;
+  padding:7px 16px; border-radius:999px; color:var(--chalk);
+  background:rgba(0,0,0,0.28); border:1px solid rgba(244,241,232,0.25);
+}
+.sch-chip.grade{background:linear-gradient(180deg,var(--wood-light),var(--wood-dark)); color:#fff5e8; border:none;}
+.sch-chip.code{margin-left:auto; letter-spacing:0.25em; color:var(--gold); border-color:rgba(255,216,102,0.4);}
+.sch-reset{
+  background:transparent; border:1px dashed rgba(244,241,232,0.3); color:var(--chalk-dim);
+  padding:7px 14px; border-radius:999px; cursor:pointer; font-family:'Patrick Hand',cursive; font-size:0.95rem;
+}
+
+/* ---------- Tafel mit Frage ---------- */
+.sch-board{
+  position:relative; border-radius:10px; padding:26px 26px 30px; margin-bottom:20px;
+  background:
+    radial-gradient(ellipse at 30% 20%, rgba(255,255,255,0.05), transparent 60%),
+    linear-gradient(180deg, var(--board), var(--board-edge));
+  border:12px solid var(--wood);
+  border-image:linear-gradient(180deg, var(--wood-light), var(--wood-dark)) 1;
+  box-shadow:0 20px 50px rgba(0,0,0,0.5), inset 0 0 40px rgba(0,0,0,0.4);
+  text-align:center;
+}
+.sch-subject-badge{
+  display:inline-block; font-family:'Patrick Hand',cursive; font-size:1.1rem;
+  letter-spacing:0.05em; padding:5px 18px; border-radius:999px; margin-bottom:14px;
+  color:#12271b; background:var(--sc, var(--chalk));
+  box-shadow:0 3px 0 rgba(0,0,0,0.25);
+}
+.sch-question{
+  font-family:'Patrick Hand',cursive; font-size:clamp(1.5rem, 3.6vw, 2.4rem);
+  line-height:1.35; color:var(--chalk);
+  text-shadow:0 1px 0 rgba(0,0,0,0.3), 0 0 1px rgba(255,255,255,0.25);
+}
+.sch-answer-reveal{
+  margin:18px auto 0; display:inline-block; padding:8px 22px; border-radius:10px;
+  font-size:1.4rem; color:#12271b; background:var(--green);
+  box-shadow:0 4px 0 rgba(0,0,0,0.25);
+}
+.sch-answer-reveal small{display:block; font-size:0.8rem; color:#123; opacity:0.7;}
+
+/* Timer */
+.sch-timer{
+  position:absolute; top:-18px; right:18px;
+  width:74px; height:74px; border-radius:50%;
+  display:flex; align-items:center; justify-content:center;
+  font-family:'Patrick Hand',cursive; font-size:2rem; color:var(--chalk);
+  background:linear-gradient(180deg,#2a5540,#183524);
+  border:5px solid var(--gold); box-shadow:0 6px 16px rgba(0,0,0,0.5);
+}
+.sch-timer.low{border-color:var(--red); color:var(--red); animation:schpulse 1s infinite;}
+@keyframes schpulse{0%,100%{transform:scale(1);}50%{transform:scale(1.12);}}
+
+/* ---------- Steuerung ---------- */
+.sch-controls{display:flex; flex-wrap:wrap; gap:12px; justify-content:center; margin-bottom:22px;}
+.sch-controls .sch-btn{width:auto; min-width:220px;}
+.sch-hint{text-align:center; color:var(--chalk-dim); font-size:1rem; margin:-8px 0 18px;}
+
+/* ---------- Spieler-Tafeln (Grid) ---------- */
+.sch-grid{
+  display:grid; gap:16px;
+  grid-template-columns:repeat(auto-fill, minmax(220px, 1fr));
+}
+.sch-slate{
+  border-radius:10px; padding:12px; background:linear-gradient(180deg,#24463360,#1a3626);
+  border:7px solid var(--wood);
+  border-image:linear-gradient(180deg,var(--wood-light),var(--wood-dark)) 1;
+  box-shadow:0 10px 26px rgba(0,0,0,0.4);
+  border-left:7px solid var(--pc);
+}
+.sch-slate.dead{opacity:0.45; filter:grayscale(0.4);}
+.sch-slate.ok{box-shadow:0 0 0 3px var(--green), 0 10px 26px rgba(0,0,0,0.4);}
+.sch-slate.bad{box-shadow:0 0 0 3px var(--red), 0 10px 26px rgba(0,0,0,0.4);}
+.sch-slate-head{display:flex; align-items:center; justify-content:space-between; gap:8px; margin-bottom:8px;}
+.sch-slate-name{
+  font-family:'Patrick Hand',cursive; font-size:1.2rem; color:var(--pc);
+  white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+}
+.sch-slate-lives{font-size:1.05rem; letter-spacing:2px; flex:none;}
+.sch-slate-lives .lost{filter:grayscale(1) brightness(0.6); opacity:0.4;}
+.sch-canvas-frame{
+  position:relative; border-radius:6px; overflow:hidden; background:#16281d;
+  border:2px solid rgba(0,0,0,0.4); aspect-ratio:16/10; display:flex; align-items:center; justify-content:center;
+}
+.sch-canvas-frame img{width:100%; height:100%; object-fit:contain; display:block;}
+.sch-canvas-empty{color:var(--chalk-dim); font-size:1rem; padding:10px; text-align:center;}
+.sch-slate-status{
+  text-align:center; margin-top:8px; font-size:1.05rem; color:var(--chalk-dim); min-height:1.4em;
+}
+.sch-slate-status.done{color:var(--green);}
+.sch-slate-status.skip{color:var(--gold);}
+.sch-slate-status.raus{color:var(--red); font-size:1.2rem;}
+
+/* Bewerten (✓ / ✗) */
+.sch-mark-row{display:flex; gap:8px; margin-top:10px;}
+.sch-mark{
+  flex:1; font-family:'Patrick Hand',cursive; font-size:1.3rem; padding:8px; border-radius:8px;
+  cursor:pointer; border:2px solid rgba(244,241,232,0.25); background:rgba(0,0,0,0.2); color:var(--chalk);
+  transition:transform .1s ease;
+}
+.sch-mark:active{transform:scale(0.95);}
+.sch-mark.ok{border-color:var(--green);}
+.sch-mark.bad{border-color:var(--red);}
+.sch-mark.ok.sel{background:var(--green); color:#12271b;}
+.sch-mark.bad.sel{background:var(--red); color:#fff;}
+
+/* ---------- Overlays ---------- */
+.sch-overlay{
+  position:fixed; inset:0; z-index:50; display:flex; align-items:center; justify-content:center;
+  background:rgba(6,16,10,0.86); backdrop-filter:blur(3px); padding:20px;
+}
+.sch-overlay-box{
+  max-width:520px; width:100%; text-align:center; padding:34px 28px; border-radius:14px;
+  background:linear-gradient(180deg, var(--board), var(--board-edge));
+  border:12px solid var(--wood);
+  border-image:linear-gradient(180deg,var(--wood-light),var(--wood-dark)) 1;
+  box-shadow:0 30px 80px rgba(0,0,0,0.6);
+}
+.sch-ov-title{font-family:'Patrick Hand',cursive; font-size:2rem; margin-bottom:12px; color:var(--gold);}
+.sch-ov-big{font-family:'Patrick Hand',cursive; font-size:2.4rem; color:var(--chalk); margin:8px 0 18px;}
+.sch-ov-list{font-size:1.3rem; color:var(--red); line-height:1.5; margin-bottom:18px;}
+.sch-ov-box .sch-btn{margin-top:6px;}
+.sch-crown{font-size:3rem;}
+.sch-standings{display:grid; gap:8px; margin:14px 0 20px; text-align:left;}
+.sch-standing{
+  display:flex; justify-content:space-between; align-items:center; padding:10px 16px; border-radius:10px;
+  background:rgba(0,0,0,0.25); border-left:5px solid var(--pc); font-size:1.15rem;
+}
+.sch-standing.first{background:rgba(255,216,102,0.15); border-color:var(--gold);}
+
+.sch-back{display:inline-block; margin-top:16px; color:var(--chalk-dim); text-decoration:none; font-size:1rem;}

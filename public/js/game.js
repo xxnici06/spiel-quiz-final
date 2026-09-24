@@ -116,10 +116,7 @@ function nextTurn() { state.turn = (state.turn + 1) % state.teams.length; }
 
 /* ---------------- Rendering: Kopfzeile ---------------- */
 function renderTopline() {
-  const played = usedGrid().reduce((s, col) => s + col.filter(Boolean).length, 0);
-  const setName = BOARD_SETS[state.setIndex || 0].name;
-  document.getElementById("boardBadge").textContent =
-    setName + " · " + board().title + " · " + played + "/25";
+  document.getElementById("boardBadge").textContent = board().title;
   const badge = document.getElementById("turnBadge");
   const t = state.teams[state.turn];
   badge.textContent = "AM ZUG: " + t.name.toUpperCase();
@@ -193,7 +190,6 @@ function renderBoard() {
 /* ---------------- Frage öffnen ---------------- */
 function openQuestion(ci, qi) {
   soundClick();
-  peekVisible = false;
   activeQ = {
     ci, qi,
     answeringTeam: state.turn,
@@ -235,22 +231,16 @@ function renderQuestionPanel() {
       "</div>" +
       (cat.reverse ? '<div class="qp-hint">Gesucht: die passende Frage zu dieser Antwort!</div>' : "") +
       '<div class="qp-question">' + escapeHtml(qa.q) + "</div>" +
-      '<div id="peekZone"></div>' +
       '<div class="qp-controls">' +
         '<button class="btn-green" id="correctBtn">✓ RICHTIG (+' + winPts + ")</button>" +
         '<button class="btn-red" id="wrongBtn">✗ FALSCH (−' + half + ")</button>" +
-        '<button class="btn-blue" id="peekBtn">👁 Antwort (nur GM)</button>' +
+        '<button class="btn-blue peek-btn" id="peekBtn">👁 ANTWORT ANSEHEN (HALTEN)</button>' +
       "</div>" +
-      (canCancel()
-        ? '<div class="qp-cancel"><button class="btn-ghost small" id="cancelBtn">↩︎ Feld doch offen lassen</button>' +
-          '<span class="qp-keys">Tasten: <b>1</b> richtig · <b>2</b> falsch · <b>A</b> Antwort · <b>Esc</b> zurück</span></div>'
-        : '<div class="qp-cancel"><span class="qp-keys">Tasten: <b>1</b> richtig · <b>2</b> falsch · <b>A</b> Antwort</span></div>');
+      '<div id="peekZone"></div>';
 
     document.getElementById("correctBtn").addEventListener("click", onCorrect);
     document.getElementById("wrongBtn").addEventListener("click", onWrong);
     setupPeekButton(qa.a);
-    const cancelBtn = document.getElementById("cancelBtn");
-    if (cancelBtn) cancelBtn.addEventListener("click", cancelQuestion);
   }
 
   if (activeQ.phase === "steal-select") {
@@ -311,34 +301,20 @@ function renderQuestionPanel() {
   }
 }
 
-/* Antwort-Spickzettel für den Gamemaster: umschaltbar (nur auf diesem Gerät) */
-let peekVisible = false;
+/* Antwort-Spickzettel: nur sichtbar solange gedrückt */
 function setupPeekButton(answer) {
   const btn = document.getElementById("peekBtn");
   const zone = document.getElementById("peekZone");
-  const paint = () => {
-    zone.innerHTML = peekVisible
-      ? '<div class="peek-answer">Lösung: ' + escapeHtml(answer) + "</div>"
-      : "";
-    btn.textContent = peekVisible ? "🙈 Antwort verbergen" : "👁 Antwort (nur GM)";
+  const show = (e) => {
+    e.preventDefault();
+    zone.innerHTML = '<div class="peek-answer">' + escapeHtml(answer) + "</div>";
   };
-  btn.onclick = () => { peekVisible = !peekVisible; paint(); };
-  paint();
-}
-function togglePeek() { const b = document.getElementById("peekBtn"); if (b) b.click(); }
-
-/* Ein frisch geöffnetes Feld darf noch zurückgelegt werden (niemand hat geantwortet). */
-function canCancel() {
-  return activeQ && activeQ.phase === "answering" && !activeQ.isSteal &&
-         activeQ.alreadyTried.length === 0;
-}
-function cancelQuestion() {
-  if (!canCancel()) return;
-  activeQ = null;
-  raisedHands = [];
-  peekVisible = false;
-  saveState();
-  renderAll();
+  const hide = () => { zone.innerHTML = ""; };
+  btn.addEventListener("mousedown", show);
+  btn.addEventListener("touchstart", show, { passive: false });
+  ["mouseup", "mouseleave", "touchend", "touchcancel"].forEach((ev) =>
+    btn.addEventListener(ev, hide)
+  );
 }
 
 /* ---------------- Wertung ---------------- */
@@ -434,29 +410,6 @@ document.getElementById("resetBtn").addEventListener("click", () => {
     }
     localStorage.removeItem(STORAGE_KEY);
     window.location.href = "jeopardy.html";
-  }
-});
-
-/* ---------------- Tastatur-Kürzel (Gamemaster) ---------------- */
-document.addEventListener("keydown", (e) => {
-  const tag = (e.target && e.target.tagName) || "";
-  if (tag === "INPUT" || tag === "TEXTAREA" || e.metaKey || e.ctrlKey || e.altKey) return;
-  if (!activeQ) return;
-  const k = (e.key || "").toLowerCase();
-  const c = e.code || "";
-  const is = (...vals) => vals.includes(k) || vals.includes(c);
-  const enter = is("enter", " ", "spacebar", "Enter", "NumpadEnter", "Space");
-  const back = is("escape", "backspace", "Escape", "Backspace");
-
-  if (activeQ.phase === "answering") {
-    if (is("1", "r", "Digit1", "Numpad1", "KeyR")) { e.preventDefault(); onCorrect(); }
-    else if (is("2", "f", "Digit2", "Numpad2", "KeyF")) { e.preventDefault(); onWrong(); }
-    else if (is("a", "KeyA")) { e.preventDefault(); togglePeek(); }
-    else if (back && canCancel()) { e.preventDefault(); cancelQuestion(); }
-  } else if (activeQ.phase === "steal-select") {
-    if (is("0", "n", "Digit0", "Numpad0", "KeyN")) { e.preventDefault(); resolveQuestion(null); }
-  } else if (activeQ.phase === "resolved") {
-    if (enter) { e.preventDefault(); closeQuestion(); }
   }
 });
 

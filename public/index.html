@@ -25,6 +25,8 @@
   }
   .game-card.jeopardy .gc-title{color:var(--gold);}
   .game-card.df .gc-title{color:#2ee6d6; text-shadow:0 0 14px rgba(46,230,214,0.4);}
+  .game-card.schule .gc-title{color:#8ce99a; text-shadow:0 0 14px rgba(140,233,154,0.35);}
+  .game-card.schule:hover{border-color:rgba(140,233,154,0.6); box-shadow:0 0 30px rgba(140,233,154,0.15), 0 24px 55px rgba(0,0,0,0.5);}
   .game-card .gc-desc{color:var(--ink-dim); font-size:0.88rem; line-height:1.55;}
   .game-card .gc-tag{
     display:inline-block; margin-top:12px; font-size:0.68rem; font-weight:700;
@@ -52,15 +54,13 @@
       <div class="gc-desc">Jeder startet mit 3 Herzen. Reihum gibt's Fragen mit 30-Sekunden-Timer – und nach jeder Runde voten alle per Handy, wer die dümmste Antwort gegeben hat. Wer gevotet wird, verliert ein Herz. Die letzten 2 kämpfen im Finale.</div>
       <span class="gc-tag">3–12 Spieler · Voting per Handy</span>
     </a>
+
+    <a class="game-card schule" href="schule.html">
+      <div class="gc-title">📚 ZURÜCK IN DIE SCHULE</div>
+      <div class="gc-desc">Alle starten in der 1. Klasse und arbeiten sich bis zur 12. hoch. Jede Runde dieselbe Frage – jeder schreibt seine Antwort auf die Tafel am Handy, nach 60 Sekunden wird aufgedeckt. Falsch = 1 Leben weg (von 2). Zwei Joker: 🔍 Spicken und 🙅 Jokertag.</div>
+      <span class="gc-tag">2–10 Spieler · Tafel zeichnen am Handy</span>
+    </a>
   </div>
 </div>
-<script>
-  /* Direktbeitritt per QR-Code: ...index.html?code=ABC123[&role=board]
-     wird an die Beitritts-Logik auf jeopardy.html weitergereicht. */
-  (function () {
-    var q = location.search;
-    if (/[?&]code=[A-Za-z0-9]{6}(&|$)/.test(q)) location.replace("jeopardy.html" + q);
-  })();
-</script>
 </body>
 </html>

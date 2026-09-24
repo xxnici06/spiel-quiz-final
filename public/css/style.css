@@ -91,7 +91,7 @@ body{
 
 /* ---------- Setup / Final ---------- */
 .setup-card{
-  max-width:640px; margin:5vh auto 0; padding:38px 32px;
+  max-width:560px; margin:5vh auto 0; padding:38px 32px;
   background:linear-gradient(180deg, var(--panel-2), var(--panel));
   border:1px solid rgba(58,99,192,0.4); border-radius:22px;
   box-shadow:0 30px 70px rgba(0,0,0,0.55), inset 0 1px 0 rgba(255,255,255,0.06);
@@ -212,13 +212,6 @@ body{
   text-align:center; line-height:1.35; margin:6px 0 22px;
 }
 .qp-controls{display:flex; justify-content:center; gap:12px; flex-wrap:wrap;}
-.qp-cancel{margin-top:14px; text-align:center; display:flex; flex-direction:column; align-items:center; gap:8px;}
-.qp-keys{font-size:0.72rem; color:var(--ink-dim);}
-.qp-keys b{
-  display:inline-block; min-width:1.3em; text-align:center; color:var(--ink);
-  background:rgba(255,255,255,0.08); border:1px solid rgba(255,255,255,0.18);
-  border-radius:5px; padding:1px 4px; font-family:'Exo 2'; font-style:normal;
-}
 .peek-btn{
   position:relative; user-select:none; -webkit-user-select:none;
 }
@@ -346,16 +339,14 @@ body{
 .score-card.mine{outline:2px dashed var(--tc); outline-offset:2px;}
 
 .count-row{display:flex; justify-content:center; gap:8px; margin-bottom:20px; flex-wrap:wrap;}
-.set-head{display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:10px;}
-.set-head .muted{color:var(--ink-dim); font-weight:400;}
-.set-grid{display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:22px;}
+.set-grid{display:grid; gap:8px; margin-bottom:22px;}
 .set-card{
-  display:flex; flex-direction:column; width:100%; text-align:left; cursor:pointer;
-  padding:11px 14px; border-radius:14px;
+  display:block; width:100%; text-align:left; cursor:pointer;
+  padding:12px 16px; border-radius:14px;
   background:rgba(255,255,255,0.04); border:2px solid rgba(58,99,192,0.35);
   color:var(--ink); font-family:'Work Sans'; transition:border-color .15s ease, transform .12s ease;
 }
-.set-card:hover{transform:translateY(-1px); border-color:rgba(58,99,192,0.7);}
+.set-card:hover{transform:translateY(-1px);}
 .set-card.active{
   border-color:var(--gold);
   background:rgba(255,210,74,0.07);
@@ -363,11 +354,10 @@ body{
 }
 .set-card .set-name{
   display:block; font-family:'Exo 2'; font-weight:800; font-style:italic;
-  font-size:0.98rem; margin-bottom:4px;
+  font-size:0.98rem; margin-bottom:2px;
 }
 .set-card.active .set-name{color:var(--gold);}
-.set-card .set-cats{display:block; font-size:0.68rem; color:var(--ink-dim); line-height:1.45; margin-top:2px;}
-.set-card .set-cats b{color:var(--ink); font-weight:700;}
+.set-card .set-cats{display:block; font-size:0.72rem; color:var(--ink-dim); line-height:1.4;}
 .count-btn{
   width:44px; height:44px; border-radius:50%; cursor:pointer;
   font-family:'Exo 2'; font-weight:800; font-style:italic; font-size:1.05rem; color:var(--ink);
@@ -447,29 +437,9 @@ body{
   background:rgba(61,220,132,0.1); border:1px solid rgba(61,220,132,0.45);
 }
 
-/* ---------- Beitritts-Hinweis auf dem Gameboard ---------- */
-.join-hint{
-  position:fixed; right:18px; bottom:18px; z-index:50;
-  display:flex; align-items:center; gap:12px;
-  padding:10px 14px 10px 10px; border-radius:16px;
-  background:rgba(8,18,42,0.92); border:1px solid rgba(58,99,192,0.5);
-  box-shadow:0 12px 30px rgba(0,0,0,0.5);
-}
-.join-hint img{width:96px; height:96px; border-radius:8px; background:#fff; padding:5px; display:block;}
-.join-hint .jh-lbl{
-  font-family:'Exo 2'; font-weight:800; font-style:italic; letter-spacing:0.06em;
-  font-size:0.72rem; color:var(--ink-dim); text-transform:uppercase;
-}
-.join-hint .jh-url{font-family:'Work Sans'; font-weight:600; font-size:0.9rem; color:var(--ink);}
-.join-hint .jh-code{
-  font-family:'Exo 2'; font-weight:900; font-style:italic; font-size:1.15rem;
-  letter-spacing:0.14em; color:var(--gold); margin-top:2px;
-}
-
 /* ---------- Mobil ---------- */
 @media (max-width:760px){
   .scoreboard{grid-template-columns:repeat(2,1fr);}
-  .set-grid{grid-template-columns:1fr;}
   .board{min-width:560px; gap:8px;}
   .cat-pill{font-size:0.6rem; min-height:40px; padding:8px 6px;}
   .cell{min-height:46px; font-size:1.05rem;}
