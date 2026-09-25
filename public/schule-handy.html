@@ -114,6 +114,13 @@
   .skipbox{text-align:center; color:var(--gold); font-size:1.2rem; padding:20px 10px;}
   .status{text-align:center; color:var(--chalk-dim); padding:22px 10px; font-size:1.05rem; line-height:1.5;}
   .status.hot{color:var(--gold); font-size:1.2rem;}
+  /* Lobby */
+  .lobby-box{text-align:center; padding:26px 16px 10px;}
+  .lobby-emoji{font-size:3rem; line-height:1;}
+  .lobby-title{font-family:'Patrick Hand',cursive; font-size:1.5rem; color:var(--chalk); margin-top:8px;}
+  .lobby-sub{color:var(--chalk-dim); font-size:1.05rem; margin-top:6px; line-height:1.4;}
+  .lobby-count{display:inline-block; margin-top:16px; padding:7px 18px; border-radius:999px;
+    background:rgba(0,0,0,0.28); border:1px solid rgba(244,241,232,0.25); color:var(--gold); font-size:1.05rem;}
   /* strip */
   .strip{margin-top:14px;}
   .strip-title{text-align:center; font-size:0.9rem; color:var(--chalk-dim); margin-bottom:6px; text-transform:uppercase; letter-spacing:0.06em;}
@@ -302,6 +309,7 @@ function reactToChange(){
     const m = snap.marks[join.me];
     if(m==="ok") soundCorrect(); else if(m==="bad") soundWrong();
   }
+  if(snap.phase==="answering"){ soundBell(); }
 }
 
 /* ---------- Timer (lokal) ---------- */
@@ -328,7 +336,9 @@ function render(){
   $("meHearts").innerHTML = me[2] ? '<span style="color:var(--red)">DURCHGEFALLEN</span>' : hearts;
 
   const chip = $("statusChip");
-  chip.textContent = "KLASSE " + snap.grade + " · FRAGE " + (snap.qi+1) + "/" + snap.qtotal;
+  chip.textContent = snap.phase==="lobby"
+    ? "🪑 Bereit – warte auf den Start"
+    : ("KLASSE " + snap.grade + " · FRAGE " + (snap.qi+1) + "/" + snap.qtotal);
 
   renderStrip();
   renderZone();
@@ -350,6 +360,7 @@ function renderStrip(){
 }
 
 function renderZone(){
+  if(snap.phase==="lobby"){ zoneKey="lobby"; buildZone(); return; }
   let key;
   if(snap.phase==="answering") key = "answer:"+snap.qkey;
   else if(snap.phase==="reveal") key = "reveal:"+snap.qkey;
@@ -362,6 +373,20 @@ function buildZone(){
   const zone = $("zone");
   const me = snap.players[join.me];
   ctx=null; canvas=null; drawing=false;
+
+  if(snap.phase==="lobby"){
+    stopTimer();
+    const N=snap.players.length;
+    const seated=(snap.seated||[]).filter(Boolean).length;
+    zone.innerHTML =
+      '<div class="lobby-box">'+
+        '<div class="lobby-emoji">🪑</div>'+
+        '<div class="lobby-title">Du sitzt auf deinem Platz!</div>'+
+        '<div class="lobby-sub">Warte, bis die Lehrperson die Stunde beginnt …</div>'+
+        '<div class="lobby-count">'+seated+' von '+N+' sitzen</div>'+
+      '</div>';
+    return;
+  }
 
   if(snap.phase==="answering"){
     submittedLocal=false; skippedLocal=false; hasDrawn=false;

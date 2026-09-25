@@ -229,3 +229,27 @@ body{
 .sch-standing.first{background:rgba(255,216,102,0.15); border-color:var(--gold);}
 
 .sch-back{display:inline-block; margin-top:16px; color:var(--chalk-dim); text-decoration:none; font-size:1rem;}
+
+/* ---------- Lobby-Sitzplätze (Board) ---------- */
+.sch-seat{
+  border-radius:10px; padding:16px 12px; text-align:center;
+  background:linear-gradient(180deg,#24463360,#1a3626);
+  border:7px solid var(--wood);
+  border-image:linear-gradient(180deg,var(--wood-light),var(--wood-dark)) 1;
+  border-left:7px solid var(--pc);
+  box-shadow:0 10px 26px rgba(0,0,0,0.4);
+  opacity:0.5; filter:grayscale(0.45); transition:opacity .25s, filter .25s, box-shadow .25s;
+}
+.sch-seat.seated{ opacity:1; filter:none; box-shadow:0 0 0 3px var(--green), 0 10px 26px rgba(0,0,0,0.4); }
+.sch-seat-icon{ font-size:2.4rem; line-height:1; }
+.sch-seat-name{
+  font-family:'Patrick Hand',cursive; font-size:1.2rem; color:var(--pc); margin-top:6px;
+  white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+}
+.sch-seat-status{ font-size:0.95rem; color:var(--chalk-dim); margin-top:4px; }
+.sch-seat.seated .sch-seat-status{ color:var(--green); }
+
+.sch-lobby-code{
+  margin-top:16px; font-size:1.15rem; color:var(--chalk-dim);
+}
+.sch-lobby-code b{ color:var(--gold); letter-spacing:0.08em; }

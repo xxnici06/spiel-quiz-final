@@ -81,8 +81,8 @@ function startGame(){
     code,
     players: setupNames.map(n => ({ name:n, lives:LIVES, out:false, spy:true, skip:true })),
     grade: 1, qi: 0,
-    phase: "answering",
-    submitted: {}, skipped: {}, marks: {}, started: {},
+    phase: "lobby",
+    seated: {}, submitted: {}, skipped: {}, marks: {}, started: {},
     winner: null,
   };
   drawings = {};
@@ -102,6 +102,14 @@ function startGame(){
     console.warn("Verbindung konnte nicht aufgebaut werden:", e);
   }
 
+  /* Kein Timer, keine Frage – erst warten, bis alle sitzen. */
+  broadcast();
+  render();
+}
+
+/* Startet die erste Frage, sobald alle auf ihren Plätzen sitzen. */
+function beginRound(){
+  if(!state || state.phase !== "lobby") return;
   loadQuestion();
 }
 
@@ -137,7 +145,13 @@ function updateTimer(){
 /* ---------------- Netz: Nachrichten der Handys ---------------- */
 function onNet(msg){
   if(!msg || msg.from !== "p" || !state) return;
-  if(msg.type === "hello" || msg.type === "joined"){ broadcast(); return; }
+  if(msg.type === "hello"){ broadcast(); return; }
+  if(msg.type === "joined"){
+    if(typeof msg.me === "number" && state.players[msg.me]) state.seated[msg.me] = true;
+    broadcast();
+    if(state.phase === "lobby") render();
+    return;
+  }
   const i = msg.me;
   if(typeof i !== "number" || !state.players[i]) return;
 
@@ -178,9 +192,10 @@ function broadcast(){
     grade: state.grade, qi: state.qi, qtotal: 3,
     qkey: qkey(),
     subject: q ? q.subject : null,
-    text: q ? q.text : null,
+    text: q ? q.q : null,
     answer: (state.phase === "reveal" && q) ? q.a : null,
     players: state.players.map(p => [p.name, p.lives, p.out ? 1 : 0, p.spy ? 1 : 0, p.skip ? 1 : 0]),
+    seated: state.players.map((_, i) => state.seated && state.seated[i] ? 1 : 0),
     submitted: state.players.map((_, i) => state.submitted[i] ? 1 : 0),
     skipped: state.players.map((_, i) => state.skipped[i] ? 1 : 0),
     started: state.players.map((_, i) => state.started[i] ? 1 : 0),
@@ -287,6 +302,7 @@ function doReset(){
 function render(){
   if(!state) return;
   if(state.status === "ended"){ renderGameover(); return; }
+  if(state.phase === "lobby"){ renderLobby(); return; }
 
   const q = currentQ();
   const meta = SUBJECT_META[q.subject] || { c:"#fff", e:"" };
@@ -297,7 +313,7 @@ function render(){
   const badge = $("boardSubject");
   badge.textContent = meta.e + " " + q.subject;
   badge.style.setProperty("--sc", meta.c);
-  $("boardQuestion").textContent = q.text;
+  $("boardQuestion").textContent = q.q;
 
   const timerEl = $("timer");
   timerEl.classList.toggle("hidden", state.phase !== "answering");
@@ -309,6 +325,45 @@ function render(){
 
   renderControls();
   renderGrid();
+}
+
+function renderLobby(){
+  stopTimer();
+  const N = state.players.length;
+  const seatedCount = state.players.filter((_, i) => state.seated[i]).length;
+
+  $("gradeChip").textContent = "KLASSE 1";
+  $("subjectChip").textContent = "🪑 Lobby";
+  $("qCountChip").textContent = seatedCount + "/" + N + " SITZEN";
+
+  const badge = $("boardSubject");
+  badge.textContent = "🪑 Nehmt eure Plätze ein";
+  badge.style.setProperty("--sc", "#e8dcc0");
+  $("boardQuestion").textContent = seatedCount >= N
+    ? "Alle sitzen – die Stunde kann beginnen!"
+    : "Warten auf die Klasse …";
+  $("boardAnswer").innerHTML = '<div class="sch-lobby-code">Mitspielen unter <b>schule-handy.html</b> · Code <b>' + state.code + "</b></div>";
+  $("timer").classList.add("hidden");
+
+  const hint = $("phaseHint");
+  hint.textContent = seatedCount >= 2
+    ? "Sobald alle auf ihren Stühlen sitzen, auf «Stunde beginnen» klicken."
+    : "Öffnet schule-handy.html am Handy, gebt den Code ein und nehmt Platz.";
+
+  const c = $("controls");
+  c.innerHTML = '<button class="sch-btn green big" id="beginBtn">📖 STUNDE BEGINNEN</button>';
+  $("beginBtn").addEventListener("click", beginRound);
+
+  $("playerGrid").innerHTML = state.players.map((p, i) => {
+    const seated = !!state.seated[i];
+    return (
+      '<div class="sch-seat' + (seated ? " seated" : "") + '" style="--pc:' + col(i) + '">' +
+        '<div class="sch-seat-icon">' + (seated ? "🧑‍🎓" : "🪑") + "</div>" +
+        '<div class="sch-seat-name">' + escapeHtml(p.name) + "</div>" +
+        '<div class="sch-seat-status">' + (seated ? "sitzt bereit ✅" : "noch nicht da") + "</div>" +
+      "</div>"
+    );
+  }).join("");
 }
 
 function renderControls(){
