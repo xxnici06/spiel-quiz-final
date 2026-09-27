@@ -9,12 +9,10 @@
 
 const PLAYER_COLORS = ["#ff5470","#3ddc84","#4a9fff","#ffd24a","#b478ff","#ff9040","#2ee6d6","#ff6ad5","#9dff57","#ff4a4a","#57c8ff","#ffe14a"];
 const SUBJECT_META = {
-  "Geografie":          { c:"#7ec8ff", e:"🌍" },
-  "Natur und Technik":  { c:"#8ce99a", e:"🔬" },
-  "Mathematik":         { c:"#ffd866", e:"➗" },
-  "Englisch":           { c:"#ff9db0", e:"🇬🇧" },
-  "Deutsch":            { c:"#ffb27a", e:"📖" },
-  "Französisch":        { c:"#c9a9ff", e:"🥖" },
+  "Mathe":               { c:"#ffd866", e:"➗" },
+  "Allgemeinbildung":      { c:"#7ec8ff", e:"🌍" },
+  "Deutsch":             { c:"#ffb27a", e:"📖" },
+  "Natur und Technik": { c:"#8ce99a", e:"🔬" },
 };
 const LIVES = 2;
 const QUESTION_SECONDS = 60;
@@ -80,7 +78,7 @@ function startGame(){
     status: "playing",
     code,
     players: setupNames.map(n => ({ name:n, lives:LIVES, out:false, spy:true, skip:true })),
-    grade: 1, qi: 0,
+    gi: 0, qi: 0,
     phase: "lobby",
     seated: {}, submitted: {}, skipped: {}, marks: {}, started: {},
     winner: null,
@@ -113,8 +111,11 @@ function beginRound(){
   loadQuestion();
 }
 
-function qkey(){ return state.grade + "-" + state.qi; }
-function currentQ(){ return SCHULE_GRADES[state.grade - 1][state.qi]; }
+function curGrade(){ return SCHULE_GRADES[state.gi]; }
+function gradeLabel(){ return curGrade().klasse; }
+function qCount(){ return curGrade().questions.length; }
+function qkey(){ return state.gi + "-" + state.qi; }
+function currentQ(){ return curGrade().questions[state.qi]; }
 
 function loadQuestion(){
   state.phase = "answering";
@@ -189,7 +190,7 @@ function broadcast(){
     g: "schule",
     status: state.status === "ended" ? "ended" : "playing",
     phase: state.phase,
-    grade: state.grade, qi: state.qi, qtotal: 3,
+    grade: gradeLabel(), qi: state.qi, qtotal: qCount(),
     qkey: qkey(),
     subject: q ? q.subject : null,
     text: q ? q.q : null,
@@ -237,7 +238,7 @@ function applyAndNext(){
 
   let gradeUp = false;
   state.qi++;
-  if(state.qi >= 3){ state.qi = 0; state.grade++; gradeUp = true; }
+  if(state.qi >= qCount()){ state.qi = 0; state.gi++; gradeUp = true; }
 
   drawings = {}; state.submitted = {}; state.skipped = {}; state.marks = {}; state.started = {};
   pending = { elim, gradeUp };
@@ -258,14 +259,14 @@ $("elimContinueBtn").addEventListener("click", () => {
 
 function afterElim(){
   const active = state.players.filter(p => !p.out).length;
-  if(active <= 1 || state.grade > 12){ endGame(); return; }
+  if(active <= 1 || state.gi >= SCHULE_GRADES.length){ endGame(); return; }
   if(pending && pending.gradeUp){ showGradeOverlay(); }
   else loadQuestion();
 }
 
 function showGradeOverlay(){
   if(typeof soundCorrect === "function") soundCorrect();
-  $("gradeOvText").textContent = "Klasse " + state.grade + "!";
+  $("gradeOvText").textContent = "Klasse " + gradeLabel() + "!";
   $("gradeOverlay").classList.remove("hidden");
 }
 $("gradeContinueBtn").addEventListener("click", () => {
@@ -306,9 +307,9 @@ function render(){
 
   const q = currentQ();
   const meta = SUBJECT_META[q.subject] || { c:"#fff", e:"" };
-  $("gradeChip").textContent = "KLASSE " + state.grade;
+  $("gradeChip").textContent = "KLASSE " + gradeLabel();
   $("subjectChip").textContent = meta.e + " " + q.subject;
-  $("qCountChip").textContent = "FRAGE " + (state.qi + 1) + "/3";
+  $("qCountChip").textContent = "FRAGE " + (state.qi + 1) + "/" + qCount();
 
   const badge = $("boardSubject");
   badge.textContent = meta.e + " " + q.subject;
@@ -332,7 +333,7 @@ function renderLobby(){
   const N = state.players.length;
   const seatedCount = state.players.filter((_, i) => state.seated[i]).length;
 
-  $("gradeChip").textContent = "KLASSE 1";
+  $("gradeChip").textContent = "KLASSE " + gradeLabel();
   $("subjectChip").textContent = "🪑 Lobby";
   $("qCountChip").textContent = seatedCount + "/" + N + " SITZEN";
 

@@ -1,83 +1,66 @@
 /* ============================================================
    ZURÜCK IN DIE SCHULE · Fragenpool
-   12 Klassen (1–12), jede Klasse 3 Fragen aus 3 Fächern.
-   Fächer: Geografie · Natur und Technik · Mathematik ·
-           Englisch · Deutsch · Französisch
-   Schwierigkeit steigt mit der Klassenstufe.
+   Jede Klasse hat eine eigene Anzahl Fragen (1–4).
+   Struktur: { klasse: <Anzeigenummer>, questions: [ {subject,q,a} ] }
+   Fächer: Mathe · Allgemeinbildung · Deutsch · Natur und Technik
    Antworten sind kurz – man schreibt sie auf die Tafel.
    ============================================================ */
 
 const SCHULE_GRADES = [
-  /* ---- Klasse 1 ---- */
-  [
-    { subject: "Mathematik", q: "Wie viel ist 2 + 3?", a: "5" },
-    { subject: "Deutsch", q: "Mit welchem Buchstaben beginnt das Wort «Apfel»?", a: "A" },
-    { subject: "Natur und Technik", q: "Welche Farbe hat der Himmel bei schönem Wetter?", a: "Blau" },
-  ],
-  /* ---- Klasse 2 ---- */
-  [
-    { subject: "Geografie", q: "In welchem Land wohnst du?", a: "Schweiz" },
-    { subject: "Englisch", q: "Was heisst «Hund» auf Englisch?", a: "Dog" },
-    { subject: "Französisch", q: "Was heisst «rot» auf Französisch?", a: "Rouge" },
-  ],
-  /* ---- Klasse 3 ---- */
-  [
-    { subject: "Deutsch", q: "Wie lautet die Mehrzahl von «Kind»?", a: "Kinder" },
-    { subject: "Natur und Technik", q: "Wie viele Beine hat eine Spinne?", a: "8" },
-    { subject: "Französisch", q: "Was heisst «danke» auf Französisch?", a: "Merci" },
-  ],
-  /* ---- Klasse 4 ---- */
-  [
-    { subject: "Mathematik", q: "Wie viel ist 7 × 8?", a: "56" },
-    { subject: "Geografie", q: "Wie heisst die Hauptstadt der Schweiz?", a: "Bern" },
-    { subject: "Englisch", q: "Was heisst «Montag» auf Englisch?", a: "Monday" },
-  ],
-  /* ---- Klasse 5 ---- */
-  [
-    { subject: "Deutsch", q: "Wie schreibt man den vierten Wochentag richtig?", a: "Donnerstag" },
-    { subject: "Natur und Technik", q: "Welches Organ pumpt das Blut durch den Körper?", a: "Herz" },
-    { subject: "Französisch", q: "Wie beginnt man den Satz «Ich heisse …» auf Französisch?", a: "Je m'appelle" },
-  ],
-  /* ---- Klasse 6 ---- */
-  [
-    { subject: "Mathematik", q: "Wie viel ist 144 : 12?", a: "12" },
-    { subject: "Geografie", q: "Wie heisst der längste Fluss der Welt?", a: "Nil" },
-    { subject: "Englisch", q: "Wie lautet die Vergangenheit von «go»?", a: "Went" },
-  ],
-  /* ---- Klasse 7 ---- */
-  [
-    { subject: "Deutsch", q: "Wie nennt man Wörter mit gegensätzlicher Bedeutung (gross–klein)?", a: "Antonyme" },
-    { subject: "Natur und Technik", q: "Wie lautet die chemische Formel von Wasser?", a: "H2O" },
-    { subject: "Französisch", q: "Was heisst «die Schule» auf Französisch?", a: "L'école" },
-  ],
-  /* ---- Klasse 8 ---- */
-  [
-    { subject: "Mathematik", q: "Löse: 3x = 27. Wie gross ist x?", a: "9" },
-    { subject: "Geografie", q: "Wie heisst der höchste Berg der Welt?", a: "Mount Everest" },
-    { subject: "Englisch", q: "Was heisst «Umwelt» auf Englisch?", a: "Environment" },
-  ],
-  /* ---- Klasse 9 ---- */
-  [
-    { subject: "Deutsch", q: "Wie heisst der erste der vier deutschen Fälle?", a: "Nominativ" },
-    { subject: "Natur und Technik", q: "Welches Gas geben Pflanzen bei der Photosynthese ab?", a: "Sauerstoff" },
-    { subject: "Französisch", q: "Was heisst «gestern» auf Französisch?", a: "Hier" },
-  ],
-  /* ---- Klasse 10 ---- */
-  [
-    { subject: "Mathematik", q: "Wie lautet der Satz des Pythagoras als Formel?", a: "a² + b² = c²" },
-    { subject: "Geografie", q: "Wie heisst die Hauptstadt von Kanada?", a: "Ottawa" },
-    { subject: "Englisch", q: "Wie lautet das Past Participle von «to write»?", a: "Written" },
-  ],
-  /* ---- Klasse 11 ---- */
-  [
-    { subject: "Deutsch", q: "Wer schrieb das Drama «Faust»?", a: "Goethe" },
-    { subject: "Englisch", q: "Was heisst «Nachhaltigkeit» auf Englisch?", a: "Sustainability" },
-    { subject: "Französisch", q: "Was heisst «immer» auf Französisch?", a: "Toujours" },
-  ],
-  /* ---- Klasse 12 ---- */
-  [
-    { subject: "Mathematik", q: "Wie lautet die Ableitung von x²?", a: "2x" },
-    { subject: "Geografie", q: "Wie heisst die Hauptstadt von Australien?", a: "Canberra" },
-    { subject: "Natur und Technik", q: "Wie heisst die Kraft, die zwei Massen zueinander zieht?", a: "Gravitation" },
-  ],
+  { klasse: 1, questions: [
+    { subject: "Mathe", q: "Was ergibt 9 − 4?", a: "5" },
+    { subject: "Allgemeinbildung", q: "Welche Sinne hat der Mensch?", a: "Sehen, Hören, Riechen, Schmecken, Tasten" },
+    { subject: "Deutsch", q: "Wie viele Silben hat das Wort «Apfel»?", a: "2" },
+  ]},
+  { klasse: 2, questions: [
+    { subject: "Mathe", q: "Was ist 4 × 2?", a: "8" },
+    { subject: "Allgemeinbildung", q: "Wie heissen unsere Nachbarländer?", a: "Deutschland, Frankreich, Italien, Österreich, Liechtenstein" },
+    { subject: "Deutsch", q: "Was ist ein Nomen? Nenne ein Beispiel.", a: "Ein Namenwort, z. B. «Hund»" },
+  ]},
+  { klasse: 3, questions: [
+    { subject: "Natur und Technik", q: "Welche drei Zustände kann Wasser haben?", a: "Fest, flüssig, gasförmig" },
+  ]},
+  { klasse: 4, questions: [
+    { subject: "Mathe", q: "Punkt vor Strich: Rechne 3 + 4 × 5", a: "23" },
+    { subject: "Allgemeinbildung", q: "Welche Hauptfarben hat die Flagge von Spanien?", a: "Rot und Gelb" },
+    { subject: "Deutsch", q: "Unterstreiche das Subjekt im Satz «Der Hund bellt laut».", a: "Der Hund" },
+  ]},
+  { klasse: 5, questions: [
+    { subject: "Mathe", q: "Runde 748 auf die nächste Hunderterstelle.", a: "700" },
+    { subject: "Allgemeinbildung", q: "Was ist eine Demokratie?", a: "Eine Staatsform, in der das Volk bestimmt" },
+    { subject: "Natur und Technik", q: "Welcher Planet ist am weitesten von der Sonne entfernt?", a: "Neptun" },
+    { subject: "Deutsch", q: "Was ist ein Adjektiv?", a: "Ein Eigenschaftswort bzw. Wie-Wort" },
+  ]},
+  { klasse: 6, questions: [
+    { subject: "Mathe", q: "Wie nennt man eine Zahl, die nur durch 1 und sich selbst teilbar ist?", a: "Primzahl" },
+    { subject: "Allgemeinbildung", q: "In welcher Himmelsrichtung geht die Sonne auf?", a: "Im Osten" },
+    { subject: "Deutsch", q: "Was ist das Gegenteil von «höflich»?", a: "Unhöflich" },
+  ]},
+  { klasse: 7, questions: [
+    { subject: "Mathe", q: "Was bedeutet das Kürzel «EU»?", a: "Europäische Union" },
+    { subject: "Allgemeinbildung", q: "Reptilien legen Eier – wie pflanzen sich Säugetiere fort?", a: "Sie gebären lebende Junge" },
+    { subject: "Deutsch", q: "Was ist das Gegenteil von «leicht»?", a: "Schwer bzw. schwierig" },
+  ]},
+  { klasse: 8, questions: [
+    { subject: "Mathe", q: "Wie berechnet man den Umfang eines Rechtecks?", a: "2 × (Länge + Breite)" },
+    { subject: "Allgemeinbildung", q: "Was zeigt ein Barometer an?", a: "Den Luftdruck" },
+  ]},
+  { klasse: 9, questions: [
+    { subject: "Mathe", q: "Wie lautet der Satz des Pythagoras?", a: "a² + b² = c²" },
+    { subject: "Natur und Technik", q: "Was ist der pH-Wert einer neutralen Lösung?", a: "7" },
+  ]},
+  { klasse: 10, questions: [
+    { subject: "Mathe", q: "Löse nach x auf: 2x + 6 = 14", a: "x = 4" },
+    { subject: "Allgemeinbildung", q: "Wie heissen die drei Bereiche der Gewaltenteilung?", a: "Legislative, Exekutive, Judikative" },
+    { subject: "Natur und Technik", q: "Welche Teilchen befinden sich im Atomkern?", a: "Protonen und Neutronen" },
+    { subject: "Deutsch", q: "Nenne zwei rhetorische Stilmittel.", a: "Zum Beispiel Metapher und Vergleich" },
+  ]},
+  { klasse: 11, questions: [
+    { subject: "Mathe", q: "Was ist die Ableitung von x²?", a: "2x" },
+    { subject: "Allgemeinbildung", q: "Was ist die Funktion der UNO?", a: "Weltfrieden und internationale Zusammenarbeit sichern" },
+  ]},
+  { klasse: 13, questions: [
+    { subject: "Natur und Technik", q: "Was beschreibt das Integral einer Funktion?", a: "Die Fläche unter dem Graphen" },
+    { subject: "Allgemeinbildung", q: "Was war der Auslöser des Ersten Weltkriegs?", a: "Das Attentat von Sarajevo auf Franz Ferdinand" },
+  ]},
 ];

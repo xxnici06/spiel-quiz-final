@@ -107,6 +107,11 @@
   }
   .tools{display:flex; gap:8px; margin-bottom:10px;}
   .tools .btn{width:auto; flex:1; font-size:1rem; padding:11px;}
+  .color-row{display:flex; gap:8px; justify-content:center; margin-bottom:10px;}
+  .swatch{width:34px; height:34px; border-radius:50%; cursor:pointer; background:var(--sw);
+    border:3px solid rgba(0,0,0,0.35); box-shadow:0 2px 6px rgba(0,0,0,0.4); transition:transform .1s;}
+  .swatch.sel{border-color:#fff; transform:scale(1.15);}
+  .swatch:active{transform:scale(0.95);}
   .joker-row{display:flex; gap:8px; margin-bottom:8px;}
   .joker-row .btn{width:auto; flex:1; font-size:1rem; padding:12px;}
   .hint{text-align:center; color:var(--chalk-dim); font-size:0.95rem; margin:6px 0;}
@@ -237,7 +242,7 @@ function soundBell(){ _tone(880,0,0.4,"sine",0.22); _tone(1320,0.02,0.5,"sine",0
 
 /* ============ Spieler-Logik ============ */
 const PLAYER_COLORS = ["#ff5470","#3ddc84","#4a9fff","#ffd24a","#b478ff","#ff9040","#2ee6d6","#ff6ad5","#9dff57","#ff4a4a","#57c8ff","#ffe14a"];
-const SUBJECT_COLORS = {"Geografie":"#7ec8ff","Natur und Technik":"#8ce99a","Mathematik":"#ffd866","Englisch":"#ff9db0","Deutsch":"#ffb27a","Französisch":"#c9a9ff"};
+const SUBJECT_COLORS = {"Mathe":"#ffd866","Allgemeinbildung":"#7ec8ff","Deutsch":"#ffb27a","Natur und Technik":"#8ce99a"};
 const JOIN_KEY = "schule_handy_v1";
 const QUESTION_SECONDS = 60;
 
@@ -249,6 +254,8 @@ let timerInt = null, timerEnd = 0;
 let lastPhaseKey = null;
 /* Zeichnen */
 let ctx = null, canvas = null, drawing = false, hasDrawn = false, lastSend = 0;
+const CHALK_COLORS = ["#f4f1e8","#ffd866","#ff9db0","#7ec8ff","#8ce99a","#ffb27a"];
+let currentColor = "#f4f1e8";
 let submittedLocal = false, skippedLocal = false;
 
 try{ join = JSON.parse(localStorage.getItem(JOIN_KEY)); }catch(e){}
@@ -405,6 +412,9 @@ function buildZone(){
       '<div class="q-card"><span class="q-subject" style="--sc:'+sc+'">'+esc(snap.subject||"")+'</span>'+
         '<div class="q-text">'+esc(snap.text||"")+'</div></div>'+
       '<div class="tafel-wrap"><canvas id="tafel" width="640" height="384"></canvas></div>'+
+      '<div class="color-row" id="colorRow">'+
+        CHALK_COLORS.map(function(c){ return '<button class="swatch'+(c===currentColor?" sel":"")+'" data-c="'+c+'" style="--sw:'+c+'"></button>'; }).join("")+
+      '</div>'+
       '<div class="tools">'+
         '<button class="btn ghost" id="clearBtn">🧽 Löschen</button>'+
         '<button class="btn green" id="submitBtn">✓ Abgeben</button>'+
@@ -419,6 +429,7 @@ function buildZone(){
     $("submitBtn").addEventListener("click", submitAnswer);
     $("spyBtn").addEventListener("click", openSpy);
     $("skipBtn").addEventListener("click", useSkip);
+    $("colorRow").querySelectorAll(".swatch").forEach(function(b){ b.addEventListener("click", function(){ setColor(b.dataset.c); }); });
     tickTimer();
     return;
   }
@@ -479,7 +490,7 @@ function setupCanvas(){
     const t = e.touches ? e.touches[0] : e;
     return { x:(t.clientX-r.left)*(canvas.width/r.width), y:(t.clientY-r.top)*(canvas.height/r.height) };
   };
-  const start = (e) => { if(submittedLocal) return; e.preventDefault(); drawing=true; const p=pos(e); ctx.beginPath(); ctx.moveTo(p.x,p.y); ctx.lineTo(p.x+0.1,p.y+0.1); ctx.stroke(); };
+  const start = (e) => { if(submittedLocal) return; e.preventDefault(); drawing=true; chalkStyle(); const p=pos(e); ctx.beginPath(); ctx.moveTo(p.x,p.y); ctx.lineTo(p.x+0.1,p.y+0.1); ctx.stroke(); };
   const move = (e) => { if(!drawing) return; e.preventDefault(); const p=pos(e); ctx.lineTo(p.x,p.y); ctx.stroke(); hasDrawn=true; };
   const end = () => { if(!drawing) return; drawing=false; if(hasDrawn) sendDraw(false); };
   canvas.addEventListener("pointerdown", start);
@@ -488,7 +499,8 @@ function setupCanvas(){
   canvas.addEventListener("pointerleave", end);
   canvas.addEventListener("pointercancel", end);
 }
-function chalkStyle(){ ctx.strokeStyle="#f4f1e8"; ctx.lineWidth=7; ctx.lineCap="round"; ctx.lineJoin="round"; ctx.shadowColor="rgba(244,241,232,0.4)"; ctx.shadowBlur=2; }
+function chalkStyle(){ ctx.strokeStyle=currentColor; ctx.lineWidth=7; ctx.lineCap="round"; ctx.lineJoin="round"; ctx.shadowColor="rgba(255,255,255,0.25)"; ctx.shadowBlur=2; }
+function setColor(c){ currentColor=c; if(ctx) chalkStyle(); const row=$("colorRow"); if(row) row.querySelectorAll(".swatch").forEach(function(b){ b.classList.toggle("sel", b.dataset.c===c); }); }
 function clearCanvasSilent(){ ctx.fillStyle="#16281d"; ctx.fillRect(0,0,canvas.width,canvas.height); chalkStyle(); }
 function clearCanvas(){ if(submittedLocal) return; clearCanvasSilent(); hasDrawn=false; sendDraw(false); }
 function sendDraw(force){
